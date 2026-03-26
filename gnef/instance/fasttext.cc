@@ -18,7 +18,6 @@
 #include <sstream>
 #include <build/gnef/dict/lid.176.ftz.xxd.h>
 #include <gnef/dict/lid.176.ftz.xxd.h>
-#include <gnef/dict/lid.176.bin.xxd.h>
 
 namespace gnef {
 
@@ -35,7 +34,10 @@ namespace gnef {
     }
     const fasttext::FastText &FastTextInstance::bin() const {
         init_call_once("", "");
-        return _bin;
+        if (_bin_initialized) {
+            return _bin;
+        }
+        return _ftz;
     }
 
     const fasttext::FastText &FastTextInstance::ftz() const {
@@ -51,15 +53,13 @@ namespace gnef {
 
     void FastTextInstance::init(const std::string &bin, const std::string &ftz) {
         std::cerr << "FastTextInstance::init start"<<std::endl;
-        std::string tmp_bin = bin;
-        if (bin.empty()) {
-            tmp_bin = "/tmp/lid.176.bin";
-            std::ofstream bin_file(tmp_bin, std::ios::binary | std::ios::trunc);
-            bin_file.write(gnef::dict::dict_lid_176_bin.data(), gnef::dict::dict_lid_176_bin.size());
-            bin_file.close();
+
+        if (!bin.empty()) {
+            _bin.loadModel(bin);
+            _bin_initialized = true;
         }
 
-        _bin.loadModel(tmp_bin);
+
         std::string tmp_ftz = ftz;
         if (ftz.empty()) {
             tmp_ftz = "/tmp/lid.176.bin";

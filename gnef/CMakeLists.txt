@@ -53,7 +53,6 @@ target_link_libraries(${LOADABLE_EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
 file(COPY ${PROJECT_SOURCE_DIR}/dict DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 set(DICT_FILES
-        dict/lid.176.bin
         dict/lid.176.ftz
 )
 
