@@ -34,8 +34,9 @@ if (KMCMAKE_BUILD_BENCHMARK)
     #include(require_benchmark)
 endif ()
 
-find_package(Threads REQUIRED)
-
+find_package(goose REQUIRED)
+find_package(fasttext REQUIRED)
+find_package(xxd REQUIRED)
 ############################################################
 #
 # add you libs to the KMCMAKE_DEPS_LINK variable eg as turbo
@@ -44,6 +45,7 @@ find_package(Threads REQUIRED)
 ##########################################################
 set(KMCMAKE_DEPS_LINK
         #${TURBO_LIB}
+        fasttext::fasttext_static
         ${KMCMAKE_SYSTEM_DYLINK}
         )
 list(REMOVE_DUPLICATES KMCMAKE_DEPS_LINK)

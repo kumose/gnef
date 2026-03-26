@@ -16,6 +16,30 @@ gnef
 
 gnef Project Description
 
+## demos
+
+```shell
+./build/gnef/gnef
+Goose v0.6.10 (Galileo)
+Enter ".help" for usage hints.
+memory GNEF select detect_lang('打水');
+FastTextInstance::init start
+FastTextInstance::init done
+┌─────────────────────┐
+│ detect_lang('打水') │                                                                                                                                                                                                                                                                                    
+│       varchar       │                                                                                                                                                                                                                                                                                    
+├─────────────────────┤                                                                                                                                                                                                                                                                                    
+│ __label__zh         │                                                                                                                                                                                                                                                                                    
+└─────────────────────┘                                                                                                                                                                                                                                                                                    
+memory GNEF select detect_lang('my eyes, look at me!');
+┌─────────────────────────────────────┐
+│ detect_lang('my eyes, look at me!') │                                                                                                                                                                                                                                                                    
+│               varchar               │                                                                                                                                                                                                                                                                    
+├─────────────────────────────────────┤                                                                                                                                                                                                                                                                    
+│ __label__en                         │                                                                                                                                                                                                                                                                    
+└─────────────────────────────────────┘                                                                                                                                                                                                                                                                    
+memory GNEF  
+```
 ## 🛠️ Build
 
 This project uses [kmpkg](https://github.com/kumose/kmcmake) for dependency management and build integration.
