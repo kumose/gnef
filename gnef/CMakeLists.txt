@@ -22,6 +22,7 @@ goose_cc_extension(
         NAME gnef
         SOURCES
         normalize/detect_language.cc
+        normalize/normalize.cc
         gnef_extension.cc
         instance/fasttext.cc
         DEPS
