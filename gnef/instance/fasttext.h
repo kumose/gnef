@@ -39,6 +39,7 @@ namespace gnef {
 
         static void init_call_once(const std::string &bin, const std::string &ftz);
 
+        bool _bin_initialized = false;
         mutable fasttext::FastText _bin;
         mutable fasttext::FastText _ftz;
     };
