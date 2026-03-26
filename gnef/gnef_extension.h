@@ -12,8 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <gnef/foo.h>
 
-int foo(int a) {
-    return  a +1;
-}
+#pragma once
+
+#include <goose/goose.h>
+
+namespace goose {
+
+    class GnefExtension : public Extension {
+    public:
+        void Load(ExtensionLoader &loader) override;
+        std::string Name() override;
+        std::string Version() const override;
+    };
+
+} // namespace goose

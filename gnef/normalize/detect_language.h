@@ -13,10 +13,17 @@
 // limitations under the License.
 //
 
-#include <gnef/foo.h>
-#include <iostream>
+#pragma once
 
-int main() {
-    std::cout<<foo( 10)<<std::endl;
-    return 0;
-}
+#include <goose/goose.h>
+#include <goose/common/exception.h>
+#include <goose/function/scalar_function.h>
+#include <goose/parser/parsed_data/create_scalar_function_info.h>
+
+namespace gnef {
+
+    void init_detect(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+
+    void detect_language(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+}  // namespace gnef
+
