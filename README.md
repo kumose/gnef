@@ -19,26 +19,45 @@ gnef Project Description
 ## demos
 
 ```shell
-./build/gnef/gnef
+./build/gnef/gnef 
 Goose v0.6.10 (Galileo)
 Enter ".help" for usage hints.
-memory GNEF select detect_lang('打水');
+memory GNEF select detect_lang('I and you, Jeff是谁', 0.6, 'bin');
 FastTextInstance::init start
 FastTextInstance::init done
-┌─────────────────────┐
-│ detect_lang('打水') │                                                                                                                                                                                                                                                                                    
-│       varchar       │                                                                                                                                                                                                                                                                                    
-├─────────────────────┤                                                                                                                                                                                                                                                                                    
-│ __label__zh         │                                                                                                                                                                                                                                                                                    
-└─────────────────────┘                                                                                                                                                                                                                                                                                    
-memory GNEF select detect_lang('my eyes, look at me!');
-┌─────────────────────────────────────┐
-│ detect_lang('my eyes, look at me!') │                                                                                                                                                                                                                                                                    
-│               varchar               │                                                                                                                                                                                                                                                                    
-├─────────────────────────────────────┤                                                                                                                                                                                                                                                                    
-│ __label__en                         │                                                                                                                                                                                                                                                                    
-└─────────────────────────────────────┘                                                                                                                                                                                                                                                                    
-memory GNEF  
+┌────────────────────────────────────────────────┐
+│ detect_lang('I and you, Jeff是谁', 0.6, 'bin') │                                                                                                                                                                                                                                                         
+│                    varchar                     │                                                                                                                                                                                                                                                         
+├────────────────────────────────────────────────┤                                                                                                                                                                                                                                                         
+│ en                                             │                                                                                                                                                                                                                                                         
+└────────────────────────────────────────────────┘                                                                                                                                                                                                                                                         
+memory GNEF select detect_lang('I and you, Jeff是谁的朋友', 0.6, 'bin');
+┌──────────────────────────────────────────────────────┐
+│ detect_lang('I and you, Jeff是谁的朋友', 0.6, 'bin') │                                                                                                                                                                                                                                                   
+│                       varchar                        │                                                                                                                                                                                                                                                   
+├──────────────────────────────────────────────────────┤                                                                                                                                                                                                                                                   
+│ en                                                   │                                                                                                                                                                                                                                                   
+└──────────────────────────────────────────────────────┘                                                                                                                                                                                                                                                   
+memory GNEF select detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.6, 'bin');
+┌──────────────────────────────────────────────────────────────────┐
+│ detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.6, 'bin') │                                                                                                                                                                                                                                       
+│                             varchar                              │                                                                                                                                                                                                                                       
+├──────────────────────────────────────────────────────────────────┤                                                                                                                                                                                                                                       
+│ unknown                                                          │                                                                                                                                                                                                                                       
+└──────────────────────────────────────────────────────────────────┘                                                                                                                                                                                                                                       
+memory GNEF select detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.1, 'bin');
+┌──────────────────────────────────────────────────────────────────┐
+│ detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.1, 'bin') │                                                                                                                                                                                                                                       
+│                             varchar                              │                                                                                                                                                                                                                                       
+├──────────────────────────────────────────────────────────────────┤                                                                                                                                                                                                                                       
+│ en                                                               │                                                                                                                                                                                                                                       
+└──────────────────────────────────────────────────────────────────┘                                                                                                                                                                                                                                       
+memory GNEF call detect_lang_table('I and you, 我是人',  0.1, 'bin', '__');
+┌───────────┬───────────┐
+│   lang    │   probe   │                                                                                                                                                                                                                                                                                  
+│  varchar  │   float   │                                                                                                                                                                                                                                                                                  
+├───────────┼───────────┤                                                                                                                                                                                                                                                                                  
+│ label__zh │ 0.9293447 │    
 ```
 ## 🛠️ Build
 
