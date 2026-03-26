@@ -18,6 +18,8 @@ gnef Project Description
 
 ## demos
 
+### lang detect
+
 ```shell
 ./build/gnef/gnef 
 Goose v0.6.10 (Galileo)
