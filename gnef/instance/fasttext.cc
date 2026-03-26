@@ -18,6 +18,7 @@
 #include <sstream>
 #include <build/gnef/dict/lid.176.ftz.xxd.h>
 #include <gnef/dict/lid.176.ftz.xxd.h>
+#include <turbo/strings/match.h>
 
 namespace gnef {
 
@@ -73,4 +74,26 @@ namespace gnef {
         std::cerr << "FastTextInstance::init done" << std::endl;
     }
 
+    // Custom zero-copy buffer to satisfy istream requirements
+    struct FastMemBuf : std::streambuf {
+        FastMemBuf(const char* base, size_t size) {
+            char* p(const_cast<char*>(base));
+            this->setg(p, p, p + size);
+        }
+    };
+
+    std::vector<std::pair<float, std::string> > FastTextInstance::detect_language(std::string_view query, float threshold, std::string_view model) {
+        FastMemBuf buf(query.data(), query.size());
+        std::istream ss(&buf);
+        std::vector<std::pair<float, std::string> > predictions;
+
+        if (!instance()._dict_bin.empty() && turbo::equals_ignore_case(model, "bin")) {
+            instance().bin().predictLine(
+           ss, predictions, 1, threshold);
+        } else {
+            instance().ftz().predictLine(
+           ss, predictions, 1, threshold);
+        }
+        return predictions;
+    }
 }  // namespace gnef

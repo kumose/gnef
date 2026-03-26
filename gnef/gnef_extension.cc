@@ -19,10 +19,10 @@
 #include <goose/common/exception.h>
 #include <goose/function/scalar_function.h>
 #include <goose/parser/parsed_data/create_scalar_function_info.h>
-
+#include  <gnef/normalize/normalize.h>
 // OpenSSL linked through vcpkg
 #include <openssl/opensslv.h>
-
+#include <gnef/version.h>
 #include <gnef/normalize/detect_language.h>
 
 namespace goose {
@@ -47,18 +47,12 @@ namespace goose {
                                                     QuackScalarFun);
         loader.RegisterFunction(quack_scalar_function);
 
-        auto detect_lang_function = ScalarFunction("detect_lang", {LogicalType::VARCHAR}, LogicalType::VARCHAR,
-                                                    gnef::detect_language);
-        loader.RegisterFunction(detect_lang_function);
-
-        auto init_lang_detector = ScalarFunction("init_detect", {LogicalType::VARCHAR, LogicalType::VARCHAR}, LogicalType::VARCHAR,
-                                                    gnef::init_detect);
-        loader.RegisterFunction(init_lang_detector);
-
         // Register another scalar function
         auto quack_openssl_version_scalar_function = ScalarFunction("quack_openssl_version", {LogicalType::VARCHAR},
                                                                     LogicalType::VARCHAR, QuackOpenSSLVersionScalarFun);
         loader.RegisterFunction(quack_openssl_version_scalar_function);
+        /// normalize
+        gnef::load_normalize(loader);
     }
 
     void GnefExtension::Load(ExtensionLoader &loader) {
@@ -70,11 +64,8 @@ namespace goose {
     }
 
     std::string GnefExtension::Version() const {
-#ifdef EXT_VERSION_QUACK
-        return EXT_VERSION_QUACK;
-#else
-        return "";
-#endif
+        static std::string version = std::string("v") + GNEF_VERSION_STRING;
+        return version;
     }
 } // namespace duckdb
 

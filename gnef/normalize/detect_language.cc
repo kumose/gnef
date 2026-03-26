@@ -18,35 +18,84 @@
 #include <gnef/instance/fasttext.h>
 
 namespace gnef {
+    static goose::string_t process_detect(std::string_view query, goose::Vector &result, float threshold,
+                                          std::string_view model, std::string_view prefix, std::string_view unknown) {
+        std::vector<std::pair<float, std::string> >
+                predictions = FastTextInstance::detect_language(query, threshold, model);
+
+        if (!predictions.empty()) {
+            auto data = turbo::strip_prefix(predictions[0].second, prefix);
+            return goose::StringVector::AddString(
+                result, goose::string_t(data.data(), data.size()));
+        }
+        return goose::StringVector::AddString(
+            result, goose::string_t(unknown.data(), unknown.size()));
+    }
+
+
     void detect_language(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
+        auto n = args.data.size();
+        auto c = DetectLanguage::instance().get_snapshot();
+        /// avoid pointer mutli addressing
+        std::string_view unknown(c->unknown);
+        std::string_view model(c->model);
+        std::string_view prefix(c->prefix);
+        float threshold = c->threshold;
+        auto func_one = [&](goose::string_t input) {
+            std::string_view text(input.GetData(), input.GetSize());
+            return process_detect(text, result, threshold,
+                                  model,prefix, unknown);
+        };
 
-        goose::UnaryExecutor::Execute<goose::string_t, goose::string_t>(name_vector, result, args.size(),
-                                                                        [&](goose::string_t input) {
-                                                                            auto const &text = input.GetString();
-                                                                            std::vector<std::pair<float, std::string> >
-                                                                                    predictions;
-                                                                            std::istringstream ss(text);
-                                                                            FastTextInstance::instance().bin().predictLine(
-                                                                                ss, predictions, 1, 0.6);
+        auto func_two = [&](goose::string_t input, float t) {
+            std::string_view text(input.GetData(), input.GetSize());
+            return process_detect(text, result, t,
+                                  model, prefix, unknown);
+        };
+        auto func_three = [&](goose::string_t input, float t, goose::string_t m) {
+            std::string_view text(input.GetData(), input.GetSize());
+            model = std::string_view(m.GetData(), m.GetSize());
+            return process_detect(text, result, t,
+                                  model, prefix, unknown);
+        };
+        switch (n) {
+            case 1: {
+                goose::UnaryExecutor::Execute<goose::string_t, goose::string_t>(name_vector, result, args.size(),
+                    func_one);
+                break;
+            }
+            case 2: {
+                auto &t = args.data[1];
+                goose::BinaryExecutor::Execute<goose::string_t, float, goose::string_t>(
+                    name_vector, t, result, args.size(),
+                    func_two);
+                break;
+            }
+            case 3: {
+                auto &t = args.data[1];
+                auto &m = args.data[2];
+                goose::TernaryExecutor::Execute<goose::string_t, float, goose::string_t, goose::string_t>(
+                    name_vector, t, m, result, args.size(),
+                    func_three);
+                break;
+            }
+            default:
+                TURBO_UNREACHABLE();
+        }
 
-                                                                            if (!predictions.empty()) {
-                                                                                return goose::StringVector::AddString(
-                                                                                    result, predictions[0].second);
-                                                                            }
-                                                                            return goose::StringVector::AddString(
-                                                                                result, "unknown");
-                                                                        });
     }
 
     void init_detect(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
         auto &ftz_vector = args.data[1];
-        goose::BinaryExecutor::Execute<goose::string_t, goose::string_t, goose::string_t>(name_vector, ftz_vector,result, args.size(),
-                                                                        [&](goose::string_t input, goose::string_t input1) {
-                                                                            FastTextInstance::init_call(input.GetString(), input1.GetString());
-                                                                            return goose::StringVector::AddString(
-                                                                                result, "ok");
-                                                                        });
+        goose::BinaryExecutor::Execute<goose::string_t, goose::string_t, goose::string_t>(
+            name_vector, ftz_vector, result, args.size(),
+            [&](goose::string_t input, goose::string_t input1) {
+                FastTextInstance::init_call(input.GetString(), input1.GetString());
+                return goose::StringVector::AddString(
+                    result, "ok");
+            });
     }
+
 } // namespace gnef
