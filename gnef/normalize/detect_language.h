@@ -30,7 +30,7 @@ namespace gnef {
 
         ~DetectLanguage() = default;
 
-        static DetectLanguage& instance() {
+        static DetectLanguage &instance() {
             static DetectLanguage instance;
             return instance;
         }
@@ -59,4 +59,63 @@ namespace gnef {
     void init_detect(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
 
     void detect_language(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+
+    //////////////////////////////////////////
+    /// config
+    struct ConfigInformation {
+        std::string name;
+        std::string region;
+        std::string type;
+        bool reloaded = false;;
+        std::string value;
+        std::string description;
+    };
+
+    struct DetectConfigData : public goose::GlobalTableFunctionState {
+        DetectConfigData() : offset(0) {
+        }
+
+        goose::vector<ConfigInformation> entries;
+        idx_t offset;
+    };
+
+    goose::unique_ptr<goose::GlobalTableFunctionState> detect_config_init(goose::ClientContext &context,
+                                                                          goose::TableFunctionInitInput &input);
+
+    goose::unique_ptr<goose::FunctionData> detect_config_bind(goose::ClientContext &context,
+                                                              goose::TableFunctionBindInput &input,
+                                                              goose::vector<goose::LogicalType> &return_types,
+                                                              goose::vector<goose::string> &names);
+
+    void detect_config_function(goose::ClientContext &context, goose::TableFunctionInput &data_p,
+                                goose::DataChunk &output);
+
+    void pragma_detect_config(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+
+    //////////////////////////////////////////
+    /// config
+    struct DetectResult {
+        std::string lang;
+        float probe;
+    };
+
+    struct DetectResultData : public goose::GlobalTableFunctionState {
+        DetectResultData() : offset(0) {
+        }
+
+        goose::vector<DetectResult> entries;
+        idx_t offset;
+    };
+
+    goose::unique_ptr<goose::GlobalTableFunctionState> detect_lang_init(goose::ClientContext &context,
+                                                                          goose::TableFunctionInitInput &input);
+
+    goose::unique_ptr<goose::FunctionData> detect_lang_bind(goose::ClientContext &context,
+                                                              goose::TableFunctionBindInput &input,
+                                                              goose::vector<goose::LogicalType> &return_types,
+                                                              goose::vector<goose::string> &names);
+
+    void detect_lang_function(goose::ClientContext &context, goose::TableFunctionInput &data_p,
+                                goose::DataChunk &output);
+
 } // namespace gnef
