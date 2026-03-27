@@ -18,6 +18,7 @@
 #include <turbo/strings/ascii.h>
 #include <merak/protobuf.h>
 #include <gnef/instance/pinyin.h>
+#include <gnef/instance/fasttext.h>
 
 namespace gnef::api {
 
@@ -44,6 +45,13 @@ namespace gnef::api {
                 sh.push_back(v[0]);
             }
             *output.mutable_pinyin_short() = std::move(sh);
+        }
+        if (setting.lang_detect()) {
+            auto r = FastTextInstance::detect_language(output.query(), 0.6, "ftz");
+            if (!r.empty()) {
+                output.set_lang(r[0].second);
+                output.set_lang_probe(r[0].first);
+            }
         }
     }
 

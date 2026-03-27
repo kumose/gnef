@@ -17,17 +17,6 @@ syntax = "proto3";
 
 package kumo.nlp;
 
-enum NormalizeOption {
-  /// no option
-  NORMALIZE_NONE = 0;
-  /// open
-  NORMALIZE_FULL_WIDTH_TO_HALF = 0x1;
-  NORMALIZE_UPPER_CASE_TO_LOWER = 0x2;
-  NORMALIZE_BLANK_TO_ONE_SPACE = 0x4;
-  NORMALIZE_REMOVE_BAD_CHAR = 0x8;
-  NORMALIZE_REMOVE_EMOJI = 0x10;
-}
-
 message NormalizeSetting {
   bool full_to_half = 1;
   /// enable phrase
@@ -62,4 +51,6 @@ message NormalizeResponse {
   string query = 1;
   string pinyin = 2;
   string pinyin_short = 3;
+  string lang  = 4;
+  double lang_probe = 5;
 }

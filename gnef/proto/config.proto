@@ -1,4 +1,4 @@
-// Copyright (C) Kumo inc. and its affiliates.
+// Copyright (C) 2026 Kumo inc. and its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,31 @@
 // limitations under the License.
 //
 
-#include <gnef/api/normalize.h>
-#include <gnef/instance/pinyin.h>
-int main(int argc, char **argv) {
-    std::string output;
-    kumo::nlp::NormalizeSetting setting = gnef::api::default_setting();
-    setting.set_zh_to_pin(true);
-    setting.set_zh_to_pin_short(true);
-    setting.set_lang_detect(true);
-    setting.set_upper_to_lower(true);
-    setting.set_punctuation_to_space(true);
-    gnef::api::normalize(argv[1], setting, output);
-    std::cout << output << std::endl;
+syntax = "proto3";
+
+package kumo.nlp;
+
+
+message DetectConfig {
+  string unknown = 1;
+  float threshold = 2;
+  string model = 3;
+  string prefix = 4;
+}
+
+message DictConfig {
+  string xpinyin_dict = 1;
+  string fasttext_dict = 2;
+  string jieba_dict = 3;
+  string hadar_dict = 4;
+};
+
+message KvConfig {
+  string key = 1;
+  string value = 2;
+}
+message Config {
+    DetectConfig detect = 1;
+    DictConfig dict = 2;
+    repeated KvConfig kv = 3;
 }

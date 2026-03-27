@@ -19,6 +19,27 @@
 
 
 namespace gnef::api {
+
+    inline kumo::nlp::NormalizeSetting default_setting() {
+        kumo::nlp::NormalizeSetting setting;
+        setting.set_remove_emoji(true);
+        setting.set_remove_bad_char(true);
+        setting.set_blank_to_one(true);
+        setting.set_full_to_half(true);
+        return setting;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    /// flows
+    /// 1. remove bad char ------------------- default
+    /// 2. halfwidth trans ------------------- default
+    /// 3. remove emoji    ------------------- default
+    /// 4. remove prunt
+    /// 5. punctuation_to_space
+    /// 6. remove blank    ------------------- default
+    /// 7. upper_to_lower
+    /// 8. chinese to pinyin
+    /// 9. lang detect
     void normalize(std::string_view input, const kumo::nlp::NormalizeSetting &setting,
                    kumo::nlp::NormalizeResponse &output);
 

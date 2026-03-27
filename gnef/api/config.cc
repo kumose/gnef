@@ -14,7 +14,124 @@
 //
 
 #include <gnef/api/config.h>
+#include <merak/protobuf.h>
 
 namespace gnef {
 
+    const std::string GnefConfig::kSystemDictDirectory = "/tmp/gnefdict";
+
+    std::shared_ptr<DictConfig> GnefConfig::get_dict_config() const {
+        DictConfigTypePtr scope;
+        _dict_config.read(&scope);
+        return *scope;
+    }
+
+    void GnefConfig::set_dict_config(std::shared_ptr<DictConfig> data) {
+        _dict_config.modify(dict_modify_func<std::shared_ptr<DictConfig>>, data);
+    }
+
+    std::shared_ptr<DetectConfig> GnefConfig::get_detect_config() const {
+        DetectConfigTypePtr scope;
+        _detect_config.read(&scope);
+        return *scope;
+    }
+
+    void GnefConfig::set_detect_config(std::shared_ptr<DetectConfig> data) {
+        _detect_config.modify(dict_modify_func<std::shared_ptr<DetectConfig>>, data);
+    }
+
+    std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> GnefConfig::get_kv_config() const {
+        KVConfigTypePtr scope;
+        _kv_config.read(&scope);
+        return *scope;
+    }
+
+    void GnefConfig::set_kv_config(std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> kv) {
+        _kv_config.modify(dict_modify_func<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>>>, kv);
+    }
+
+    GnefConfig::GnefConfig() {
+        auto dict = std::make_shared<DictConfig>();
+        _dict_config.modify(dict_modify_func<std::shared_ptr<DictConfig>>, dict);
+        auto detect = std::make_shared<DetectConfig>();
+        _detect_config.modify(dict_modify_func<std::shared_ptr<DetectConfig>>, detect);
+        auto kv = std::make_shared<turbo::flat_hash_map<std::string, std::string>>();
+        _kv_config.modify(dict_modify_func<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>>>, kv);
+    }
+
+    turbo::Status GnefConfig::load_pb_config(const kumo::nlp::Config &config) {
+        auto dict = std::make_shared<DictConfig>();
+        auto detect = std::make_shared<DetectConfig>();
+        auto kv = std::make_shared<turbo::flat_hash_map<std::string, std::string>>();
+        /// merge old
+        *dict = *get_dict_config();
+        *detect = *get_detect_config();
+        *kv = *get_kv_config();
+        /// merge new
+        bool dict_changed = false;
+        bool detect_changed = false;
+
+        if (config.has_detect()) {
+            auto d = config.detect();
+            if (!d.unknown().empty()) {
+                detect->unknown = d.unknown();
+                detect_changed = true;
+            }
+            if (d.threshold() > 0.0 || d.threshold() < 1.0) {
+                detect->threshold = d.threshold();
+                detect_changed = true;
+            }
+            if (!d.model().empty()) {
+                detect->model = d.model();
+                detect_changed = true;
+            }
+            if (!d.prefix().empty()) {
+                detect->prefix = d.prefix();
+                detect_changed = true;
+            }
+        }
+
+        if (config.has_dict()) {
+            auto d = config.dict();
+            if (!d.xpinyin_dict().empty()) {
+                dict->xpinyin_dict = d.xpinyin_dict();
+                dict_changed = true;
+            }
+
+            if (!d.fasttext_dict().empty()) {
+                dict->fasttext_dict = d.fasttext_dict();
+                dict_changed = true;
+            }
+            if (!d.jieba_dict().empty()) {
+                dict->jieba_dict = d.jieba_dict();
+                dict_changed = true;
+            }
+
+            if (!d.hadar_dict().empty()) {
+                dict->hadar_dict = d.hadar_dict();
+                dict_changed = true;
+            }
+        }
+
+        for (auto &it : config.kv()) {
+            (*kv)[it.key()] = it.value();
+        }
+        if (dict_changed) {
+            _dict_config.modify(dict_modify_func<std::shared_ptr<DictConfig>>, dict);
+        }
+
+        if (detect_changed) {
+            _detect_config.modify(dict_modify_func<std::shared_ptr<DetectConfig>>, detect);
+        }
+        if (!config.kv().empty()) {
+            _kv_config.modify(dict_modify_func<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>>>, kv);
+        }
+        return turbo::OkStatus();
+    }
+
+    turbo::Status GnefConfig::load_json_config(const std::string &json) {
+        kumo::nlp::Config config;
+        TURBO_RETURN_NOT_OK(merak::json_to_proto_message(json, &config));
+        return load_pb_config(config);
+    }
 }  // namespace gnef

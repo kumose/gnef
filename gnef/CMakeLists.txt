@@ -18,6 +18,35 @@
 ###kmcmake_example
 
 
+file(COPY ${PROJECT_SOURCE_DIR}/dict DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+set(DICT_FILES
+        dict/lid.176.ftz
+)
+
+kmcmake_cc_xxd(
+        NAME        gen_dict
+        NAMESPACE   gnef::dict
+        OUTDIR      ${CMAKE_CURRENT_BINARY_DIR}
+        INCLUDEBASE ${PROJECT_BINARY_DIR}
+        ASSETDIR    ${CMAKE_CURRENT_BINARY_DIR}
+        FILES
+        ${DICT_FILES}
+)
+
+kmcmake_cc_library(
+        NAMESPACE ${PROJECT_NAME}
+        NAME gnef_dict
+        SOURCES
+        ${gen_dict_SRCS}
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        LINKS
+        ${KMCMAKE_DEPS_LINK}
+        PUBLIC
+)
+
+
 set(PROTO_FILES
         proto/embedding.proto
         proto/intent.proto
@@ -28,6 +57,7 @@ set(PROTO_FILES
         proto/search.proto
         proto/segment.proto
         proto/semantic.proto
+        proto/config.proto
 )
 
 kmcmake_cc_proto(
@@ -39,7 +69,7 @@ kmcmake_cc_proto(
 )
 
 kmcmake_cc_object(
-        NAMESPACE ksearch
+        NAMESPACE gnef
         NAME proto_obj
         SOURCES
         ${proto_obj_SRCS}
@@ -62,6 +92,7 @@ kmcmake_cc_library(
         CXXOPTS
         ${KMCMAKE_CXX_OPTIONS}
         PLINKS
+        gnef::gnef_dict_static
         ${KMCMAKE_DEPS_LINK}
         PUBLIC
 )
@@ -100,34 +131,6 @@ target_link_libraries(${EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
 target_link_libraries(${LOADABLE_EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
 ]]
 
-file(COPY ${PROJECT_SOURCE_DIR}/dict DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-set(DICT_FILES
-        dict/lid.176.ftz
-)
-
-kmcmake_cc_xxd(
-        NAME        gen_dict
-        NAMESPACE   gnef::dict
-        OUTDIR      ${CMAKE_CURRENT_BINARY_DIR}
-        INCLUDEBASE ${PROJECT_BINARY_DIR}
-        ASSETDIR    ${CMAKE_CURRENT_BINARY_DIR}
-        FILES
-        ${DICT_FILES}
-)
-
-kmcmake_cc_library(
-        NAMESPACE ${PROJECT_NAME}
-        NAME gnef_dict
-        SOURCES
-        ${gen_dict_SRCS}
-        CXXOPTS
-        ${KMCMAKE_CXX_OPTIONS}
-        LINKS
-        ${KMCMAKE_DEPS_LINK}
-        PUBLIC
-)
-
 kmcmake_cc_binary(
         NAMESPACE ${PROJECT_NAME}
         NAME gnef
@@ -155,7 +158,6 @@ kmcmake_cc_binary(
         CXXOPTS
         ${KMCMAKE_CXX_OPTIONS}
         LINKS
-        gnef::goose_gnef
         gnef::gnef_dict_static
         gnef::proto_static
         ${KMCMAKE_DEPS_LINK}
