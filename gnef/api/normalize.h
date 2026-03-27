@@ -19,17 +19,16 @@
 
 
 namespace gnef::api {
-    typedef size_t (*char_processor)(const char *__restrict data, size_t len, size_t index, std::string &output);
-
-    template<bool remove_bad_char_flag>
-    void to_halfwidth_fast(std::string_view input, std::string &output);
-
     void normalize(std::string_view input, const kumo::nlp::NormalizeSetting &setting,
                    kumo::nlp::NormalizeResponse &output);
 
     void normalize(std::string_view input, const kumo::nlp::NormalizeSetting &setting, std::string &json_output);
 
-    void chinese_to_pinyin(const std::string &input, std::string &pinyin_output, std::string *pinyin_short_output = nullptr);
+    template<bool remove_bad_char_flag>
+    void to_halfwidth_fast(std::string_view input, std::string &output);
+
+    void chinese_to_pinyin(const std::string &input, std::string &pinyin_output,
+                           std::string *pinyin_short_output = nullptr);
 
     /// 1. halfwidth trans
     /// 2. normalize_remove
