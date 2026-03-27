@@ -17,6 +17,50 @@
 ###########################################################################
 ###kmcmake_example
 
+
+set(PROTO_FILES
+        proto/embdding.proto
+        proto/intent.proto
+        proto/ner.proto
+        proto/ngram.proto
+        proto/normalize.proto
+        proto/rewrite.proto
+        proto/search.proto
+        proto/segment.proto
+        proto/semantic.proto
+)
+
+kmcmake_cc_proto(
+        NAME proto_obj
+        PROTOS
+        ${PROTO_FILES}
+        OUTDIR
+        ${PROJECT_SOURCE_DIR}
+)
+
+kmcmake_cc_object(
+        NAMESPACE ksearch
+        NAME proto_obj
+        SOURCES
+        ${proto_obj_SRCS}
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+)
+
+kmcmake_cc_library(
+        NAMESPACE ${PROJECT_NAME}
+        NAME proto
+        OBJECTS
+        proto_obj
+        DEPS
+        proto_obj
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        PLINKS
+        ${KMCMAKE_DEPS_LINK}
+        PUBLIC
+)
+
 goose_cc_extension(
         NAMESPACE ${PROJECT_NAME}
         NAME gnef
