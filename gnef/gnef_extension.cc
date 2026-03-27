@@ -1,4 +1,3 @@
-// Copyright (C) DuckDB inc. and its affiliates.
 // Copyright (C) Kumo inc. and its affiliates.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

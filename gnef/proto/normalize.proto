@@ -18,28 +18,28 @@ syntax = "proto3";
 package kumo.nlp;
 
 enum NormalizeOption {
-    /// no option
-    NORMALIZE_NONE = 0;
-    /// open
-    NORMALIZE_FULL_WIDTH_TO_HALF = 0x1;
-    NORMALIZE_UPPER_CASE_TO_LOWER = 0x2;
-    NORMALIZE_BLANK_TO_ONE_SPACE = 0x4;
-    NORMALIZE_REMOVE_BAD_CHAR = 0x8;
-    NORMALIZE_REMOVE_EMOJI = 0x10;
+  /// no option
+  NORMALIZE_NONE = 0;
+  /// open
+  NORMALIZE_FULL_WIDTH_TO_HALF = 0x1;
+  NORMALIZE_UPPER_CASE_TO_LOWER = 0x2;
+  NORMALIZE_BLANK_TO_ONE_SPACE = 0x4;
+  NORMALIZE_REMOVE_BAD_CHAR = 0x8;
+  NORMALIZE_REMOVE_EMOJI = 0x10;
 }
 
 message NormalizeSetting {
-  bool full_to_half       = 1;
+  bool full_to_half = 1;
   /// enable phrase
-  bool upper_to_lower     = 2;
+  bool upper_to_lower = 2;
   /// continous space to one
-  bool blank_to_one       = 3;
+  bool blank_to_one = 3;
   /// lang detect
-  bool lang_detect       = 4;
+  bool lang_detect = 4;
   /// remove bad char
-  bool remove_bad_char       = 5;
+  bool remove_bad_char = 5;
   /// remove emoji
-  bool remove_emoji          = 6;
+  bool remove_emoji = 6;
   /// remove punctuation_to_space,
   /// if set remove_punctuation,
   /// this no means
@@ -53,8 +53,8 @@ message NormalizeSetting {
 };
 
 message NormalizeRequest {
-    string query = 1;
-    NormalizeSetting setting = 2;
+  string query = 1;
+  NormalizeSetting setting = 2;
 }
 
 message NormalizeResponse {

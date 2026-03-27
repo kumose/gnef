@@ -41,6 +41,8 @@ find_package(xxd REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(merak REQUIRED)
 find_package(jieba REQUIRED)
+find_package(xpinyin REQUIRED)
+
 if (Protobuf_VERSION GREATER 4.21)
     # required by absl
     find_package(absl REQUIRED CONFIG)
@@ -95,6 +97,8 @@ set(KMCMAKE_DEPS_LINK
         protobuf::libprotoc
         turbo::turbo_static
         jieba::dict_static
+        xpinyin::xpinyin_static
+        xpinyin::xpinyin_dict_static
         fasttext::fasttext_static
         ${KMCMAKE_SYSTEM_DYLINK}
         )

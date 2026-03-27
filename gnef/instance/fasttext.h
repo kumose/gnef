@@ -30,7 +30,6 @@ namespace gnef {
         const fasttext::FastText &ftz() const;
 
 
-
         static void init_call(const std::string &bin, const std::string &ftz);
 
         static std::string dict_name() {

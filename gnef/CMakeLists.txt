@@ -50,6 +50,11 @@ kmcmake_cc_object(
 kmcmake_cc_library(
         NAMESPACE ${PROJECT_NAME}
         NAME proto
+        SOURCES
+        api/config.cc
+        api/normalize.cc
+        instance/pinyin.cc
+        instance/fasttext.cc
         OBJECTS
         proto_obj
         DEPS
@@ -138,6 +143,21 @@ kmcmake_cc_binary(
         goose::vss_static
         goose::httpfs_static
         gnef::gnef_dict_static
+        ${KMCMAKE_DEPS_LINK}
+        LINKOPTS
+        ${KMCMAKE_STATIC_BIN_OPTION}
+)
+kmcmake_cc_binary(
+        NAMESPACE ${PROJECT_NAME}
+        NAME nor
+        SOURCES
+        nor.cc
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        LINKS
+        gnef::goose_gnef
+        gnef::gnef_dict_static
+        gnef::proto_static
         ${KMCMAKE_DEPS_LINK}
         LINKOPTS
         ${KMCMAKE_STATIC_BIN_OPTION}
