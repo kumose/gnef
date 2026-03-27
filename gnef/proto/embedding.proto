@@ -17,14 +17,20 @@ syntax = "proto3";
 
 package kumo.nlp;
 
-  message EmbeddingSetting {
-    string model = 1;
-  }
+message EmbeddingSetting {
+    repeated string model = 1;
+}
+
 message EmbeddingRequest {
   string query = 1;
   EmbeddingSetting setting = 2;
 }
 
+message EmbeddingItem {
+  string label = 1;
+  repeated float feature = 2;
+}
+
 message EmbeddingResponse {
-  repeated float feature = 1;
+  repeated EmbeddingItem features = 2;
 }

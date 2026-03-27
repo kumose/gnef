@@ -19,7 +19,7 @@
 
 
 set(PROTO_FILES
-        proto/embdding.proto
+        proto/embedding.proto
         proto/intent.proto
         proto/ner.proto
         proto/ngram.proto

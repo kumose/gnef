@@ -20,7 +20,7 @@ package kumo.nlp;
 import "gnef/proto/normalize.proto";
 import "gnef/proto/segment.proto";
 import "gnef/proto/ner.proto";
-import "gnef/proto/embdding.proto";
+import "gnef/proto/embedding.proto";
 import "gnef/proto/ngram.proto";
 import "gnef/proto/semantic.proto";
 import "gnef/proto/rewrite.proto";
