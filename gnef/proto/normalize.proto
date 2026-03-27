@@ -1,0 +1,65 @@
+// Copyright (C) 2026 Kumo inc. and its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+syntax = "proto3";
+
+package kumo.nlp;
+
+enum NormalizeOption {
+    /// no option
+    NORMALIZE_NONE = 0;
+    /// open
+    NORMALIZE_FULL_WIDTH_TO_HALF = 0x1;
+    NORMALIZE_UPPER_CASE_TO_LOWER = 0x2;
+    NORMALIZE_BLANK_TO_ONE_SPACE = 0x4;
+    NORMALIZE_REMOVE_BAD_CHAR = 0x8;
+    NORMALIZE_REMOVE_EMOJI = 0x10;
+}
+
+message NormalizeSetting {
+  bool full_to_half       = 1;
+  /// enable phrase
+  bool upper_to_lower     = 2;
+  /// continous space to one
+  bool blank_to_one       = 3;
+  /// lang detect
+  bool lang_detect       = 4;
+  /// remove bad char
+  bool remove_bad_char       = 5;
+  /// remove emoji
+  bool remove_emoji          = 6;
+  /// remove punctuation_to_space,
+  /// if set remove_punctuation,
+  /// this no means
+  bool punctuation_to_space = 7;
+  /// remove punctuation
+  bool remove_punctuation = 8;
+  /// chinese to pinyin, 我们 -> wo men
+  bool zh_to_pin = 9;
+  /// chinese to pinyin short 我们 -> wm
+  bool zh_to_pin_short = 10;
+};
+
+message NormalizeRequest {
+    string query = 1;
+    NormalizeSetting setting = 2;
+}
+
+message NormalizeResponse {
+  /// normalize query
+  string query = 1;
+  string pinyin = 2;
+  string pinyin_short = 3;
+}

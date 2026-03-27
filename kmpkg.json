@@ -2,6 +2,8 @@
   "dependencies": [
     "fasttext",
     "goose",
-    "xxd"
+    "jieba",
+    "xxd",
+    "merak"
   ]
 }

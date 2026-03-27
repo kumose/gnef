@@ -37,6 +37,50 @@ endif ()
 find_package(goose REQUIRED)
 find_package(fasttext REQUIRED)
 find_package(xxd REQUIRED)
+
+find_package(Protobuf REQUIRED)
+find_package(merak REQUIRED)
+find_package(jieba REQUIRED)
+if (Protobuf_VERSION GREATER 4.21)
+    # required by absl
+    find_package(absl REQUIRED CONFIG)
+    set(protobuf_ABSL_USED_TARGETS
+            absl::absl_check
+            absl::absl_log
+            absl::algorithm
+            absl::base
+            absl::bind_front
+            absl::bits
+            absl::btree
+            absl::cleanup
+            absl::cord
+            absl::core_headers
+            absl::debugging
+            absl::die_if_null
+            absl::dynamic_annotations
+            absl::flags
+            absl::flat_hash_map
+            absl::flat_hash_set
+            absl::function_ref
+            absl::hash
+            absl::layout
+            absl::log_initialize
+            absl::log_severity
+            absl::memory
+            absl::node_hash_map
+            absl::node_hash_set
+            absl::optional
+            absl::span
+            absl::status
+            absl::statusor
+            absl::strings
+            absl::synchronization
+            absl::time
+            absl::type_traits
+            absl::utility
+            absl::variant
+    )
+endif ()
 ############################################################
 #
 # add you libs to the KMCMAKE_DEPS_LINK variable eg as turbo
@@ -45,6 +89,12 @@ find_package(xxd REQUIRED)
 ##########################################################
 set(KMCMAKE_DEPS_LINK
         #${TURBO_LIB}
+        merak::merak_static
+        protobuf::libprotobuf
+        ${protobuf_ABSL_USED_TARGETS}
+        protobuf::libprotoc
+        turbo::turbo_static
+        jieba::dict_static
         fasttext::fasttext_static
         ${KMCMAKE_SYSTEM_DYLINK}
         )
