@@ -83,8 +83,11 @@ kmcmake_cc_library(
         SOURCES
         api/config.cc
         api/normalize.cc
+        api/dict.cc
+        api/initializer.cc
         instance/pinyin.cc
         instance/fasttext.cc
+        instance/hadar.cc
         OBJECTS
         proto_obj
         DEPS

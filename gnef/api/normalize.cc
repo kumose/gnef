@@ -19,6 +19,7 @@
 #include <merak/protobuf.h>
 #include <gnef/instance/pinyin.h>
 #include <gnef/instance/fasttext.h>
+#include <gnef/instance/hadar.h>
 
 namespace gnef::api {
 
@@ -29,7 +30,7 @@ namespace gnef::api {
         if (!setting.zh_to_pin() && !setting.zh_to_pin_short()) {
             return;
         }
-        auto rv = PinyinHandler::hanzi_to_pinyin(output.query());
+        auto rv = PinyinInstance::instance().get()->hanzi_to_pinyin(output.query());
         if (setting.zh_to_pin()) {
             auto str = rv.toStdStr();
             *output.mutable_pinyin() = std::move(str);
@@ -51,6 +52,21 @@ namespace gnef::api {
             if (!r.empty()) {
                 output.set_lang(r[0].second);
                 output.set_lang_probe(r[0].first);
+            }
+        }
+
+        if (!setting.convert().empty()) {
+            auto ins = HadarInstance::instance().get();
+            auto ret = output.mutable_convert();
+            ret->Reserve(setting.convert().size());
+            for (auto &ct : setting.convert()) {
+                auto r = ins->convert(output.query(),  ct);
+                if (r.ok()) {
+                    *ret->Add() = std::move(r).value_or_die();
+                    continue;
+                } else {
+                    *ret->Add() = "__err:" + r.status().message();
+                }
             }
         }
     }

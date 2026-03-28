@@ -17,25 +17,45 @@
 
 #include  <xpinyin/pinyin.h>
 
-#include "turbo/utility/internal/status.h"
+#include <turbo/utility/status.h>
+#include <gnef/instance/double_instance.h>
 
-namespace gnef {
+namespace gnef::api {
+
+    class  PinyinHandler;
+
+    class PinyinInstance : public DoubleInstance<PinyinHandler, PinyinInstance> {
+    public:
+        ~PinyinInstance() override = default;
+
+        turbo::Status initialize(const std::string &dict_dir) override;
+
+    private:
+        friend class DoubleInstance<PinyinHandler, PinyinInstance>;
+        PinyinInstance() = default;
+    };
+
     class PinyinHandler {
     public:
-        ~PinyinHandler();
-        static PinyinHandler &instance() {
-            static PinyinHandler instance;
-            return instance;
-        }
 
-        static xpinyin::PinyinResVector hanzi_to_pinyin(const std::string &hans,
-                              xpinyin::ManTone::Style style = xpinyin::ManTone::Style::NORMAL,
-                              xpinyin::Error error = xpinyin::Default, bool candidates = true, bool v_to_u = false,
-                              bool neutral_tone_with_five = false);
+        PinyinHandler() = default;
+        ~PinyinHandler() = default;
 
-        turbo::Status initialize(const std::string &dict_dir = "");
+
+        xpinyin::PinyinResVector hanzi_to_pinyin(const std::string &hans,
+                                                        xpinyin::ManTone::Style style = xpinyin::ManTone::Style::NORMAL,
+                                                        xpinyin::Error error = xpinyin::Default, bool candidates = true,
+                                                        bool v_to_u = false,
+                                                        bool neutral_tone_with_five = false);
+
+
+    private:
+        friend class PinyinInstance;
+
+        turbo::Status initialize(const std::string & dict_dir);
+
     private:
         std::string _dict_path;
         std::unique_ptr<xpinyin::Pinyin> _pinyin;
     };
-} // namespace genf
+} // namespace gnef::api

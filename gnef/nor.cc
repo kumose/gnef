@@ -15,7 +15,15 @@
 
 #include <gnef/api/normalize.h>
 #include <gnef/instance/pinyin.h>
+#include <gnef/api/initializer.h>
+
 int main(int argc, char **argv) {
+    kumo::nlp::Config config;
+    auto rs = gnef::api::initialize_gnef(config);
+    if (!rs.ok()) {
+        std::cerr << rs.message() << std::endl;
+        return 1;
+    }
     std::string output;
     kumo::nlp::NormalizeSetting setting = gnef::api::default_setting();
     setting.set_zh_to_pin(true);
@@ -23,6 +31,8 @@ int main(int argc, char **argv) {
     setting.set_lang_detect(true);
     setting.set_upper_to_lower(true);
     setting.set_punctuation_to_space(true);
+    setting.mutable_convert()->Add("s2tw");
+    setting.mutable_convert()->Add("sp2tw");
     gnef::api::normalize(argv[1], setting, output);
     std::cout << output << std::endl;
 }

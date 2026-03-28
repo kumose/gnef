@@ -67,6 +67,13 @@ memory GNEF call detect_lang_table('I and you, 我是人',  0.1, 'bin', '__');
 FastTextInstance::init start
 FastTextInstance::init done
 {"query":"我来了a 你呢 啊哈哈","pinyin":"wo lai le a ni ne a ha ha","pinyin_short":"wllannahh","lang":"__label__zh","lang_probe":0.9319515824317932}
+
+# 开启转换
+./build/gnef/nor '我来了☺A，你呢      啊哈哈'
+FastTextInstance::init start
+FastTextInstance::init done
+{"query":"我来了a 你呢 啊哈哈","pinyin":"wo lai le a ni ne a ha ha","pinyin_short":"wllannahh","lang":"__label__zh","lang_probe":0.9319515824317932,"convert":["我來了a 你呢 啊哈哈","__err:not found method"]}
+
 ```
 ## 🛠️ Build
 

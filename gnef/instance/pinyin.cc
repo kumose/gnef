@@ -20,46 +20,34 @@
 #include <xpinyin/dump_dict.h>
 #include <xpinyin/g2p_global.h>
 
-namespace gnef {
+namespace gnef::api {
 
 
-    std::once_flag pinyin_init;
-
-    PinyinHandler::~PinyinHandler() {
-
-        if (turbo::starts_with(_dict_path, "/tmp/temppinyindict/")) {
-            TURBO_UNUSED(turbo::remove_all(_dict_path));
-        }
-
-    }
-    void pinyin_init_func() {
-        std::call_once(pinyin_init, [] () {
-            TURBO_UNUSED(PinyinHandler::instance().initialize(""));
-        });
-    }
     turbo::Status PinyinHandler::initialize(const std::string &dict_dir) {
-        if (!_dict_path.empty()) {
-            return turbo::OkStatus();
-        }
-        auto dir = dict_dir;
-        if (dir.empty()) {
-            /// no dict, using own
-            dir = std::string("/tmp/temppinyindict/") + std::to_string(turbo::RandUint64());
-            auto rs = xpinyin::dump_dict(dir, true);
-            std::cerr << rs<<std::endl;
-            dir += "/dict/";
-        }
-        _dict_path = dir;
+        _dict_path = dict_dir;
         xpinyin::setDictionaryPath(_dict_path);
         _pinyin = std::make_unique<xpinyin::Pinyin>();
+        if (!xpinyin::is_loaded_dict()) {
+            return turbo::unavailable_error("xpinyin load dict failed");
+        }
         return turbo::OkStatus();
     }
     xpinyin::PinyinResVector PinyinHandler::hanzi_to_pinyin(const std::string &hans,
                               xpinyin::ManTone::Style style,
                               xpinyin::Error error, bool candidates, bool v_to_u,
                               bool neutral_tone_with_five) {
-        pinyin_init_func();
-       return  instance()._pinyin->hanziToPinyin(hans, style, error, candidates, v_to_u, neutral_tone_with_five);
+       return  _pinyin->hanziToPinyin(hans, style, error, candidates, v_to_u, neutral_tone_with_five);
     }
-}  // namespace genf
+
+    turbo::Status PinyinInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("dict dir is empty");
+        }
+
+        auto ptr = std::make_shared<PinyinHandler>();
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        return turbo::OkStatus();
+    }
+}  // namespace gnef::api
 

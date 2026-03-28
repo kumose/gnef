@@ -39,7 +39,11 @@ message NormalizeSetting {
   bool zh_to_pin = 9;
   /// chinese to pinyin short 我们 -> wm
   bool zh_to_pin_short = 10;
+  /// hk2s, hk2t, jp2t, s2hk,s2t,s2tw,s2twp,t2hk
+  /// t2jp, t2s, t2tw, tw2s, tw2sp, tw2t
+  repeated string convert = 11;
 };
+
 
 message NormalizeRequest {
   string query = 1;
@@ -53,4 +57,5 @@ message NormalizeResponse {
   string pinyin_short = 3;
   string lang  = 4;
   double lang_probe = 5;
+  repeated string convert = 6;
 }

@@ -40,6 +40,7 @@ namespace gnef::api {
     /// 7. upper_to_lower
     /// 8. chinese to pinyin
     /// 9. lang detect
+    /// 10. convert simple to tradition or reverse.
     void normalize(std::string_view input, const kumo::nlp::NormalizeSetting &setting,
                    kumo::nlp::NormalizeResponse &output);
 

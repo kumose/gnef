@@ -13,33 +13,14 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include <gnef/proto/config.pb.h>
 
+#include <turbo/utility/status.h>
 
-message DetectConfig {
-  string unknown = 1;
-  float threshold = 2;
-  string model = 3;
-  string prefix = 4;
-}
+namespace gnef::api {
 
-message DictConfig {
-  string xpinyin_dict = 1;
-  string fasttext_dict = 2;
-  string jieba_dict = 3;
-  string hadar_dict = 4;
-  string system_dict = 5;
-  bool   reset_system_dict = 6;
-};
+    turbo::Status initialize_gnef(const kumo::nlp::Config &config);
 
-message KvConfig {
-  string key = 1;
-  string value = 2;
-}
-message Config {
-    DetectConfig detect = 1;
-    DictConfig dict = 2;
-    repeated KvConfig kv = 3;
 }

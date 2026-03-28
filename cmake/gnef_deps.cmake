@@ -42,7 +42,8 @@ find_package(Protobuf REQUIRED)
 find_package(merak REQUIRED)
 find_package(jieba REQUIRED)
 find_package(xpinyin REQUIRED)
-
+find_package(hadar REQUIRED)
+find_package(Marisa REQUIRED)
 if (Protobuf_VERSION GREATER 4.21)
     # required by absl
     find_package(absl REQUIRED CONFIG)
@@ -95,6 +96,8 @@ set(KMCMAKE_DEPS_LINK
         protobuf::libprotobuf
         ${protobuf_ABSL_USED_TARGETS}
         protobuf::libprotoc
+        hadar::hadar_static
+        hadar::hadar_data_static
         turbo::turbo_static
         jieba::dict_static
         xpinyin::xpinyin_static
