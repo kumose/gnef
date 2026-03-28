@@ -18,83 +18,6 @@
 ###kmcmake_example
 
 
-set(PROTO_FILES
-        proto/embdding.proto
-        proto/intent.proto
-        proto/ner.proto
-        proto/ngram.proto
-        proto/normalize.proto
-        proto/rewrite.proto
-        proto/search.proto
-        proto/segment.proto
-        proto/semantic.proto
-)
-
-kmcmake_cc_proto(
-        NAME proto_obj
-        PROTOS
-        ${PROTO_FILES}
-        OUTDIR
-        ${PROJECT_SOURCE_DIR}
-)
-
-kmcmake_cc_object(
-        NAMESPACE ksearch
-        NAME proto_obj
-        SOURCES
-        ${proto_obj_SRCS}
-        CXXOPTS
-        ${KMCMAKE_CXX_OPTIONS}
-)
-
-kmcmake_cc_library(
-        NAMESPACE ${PROJECT_NAME}
-        NAME proto
-        OBJECTS
-        proto_obj
-        DEPS
-        proto_obj
-        CXXOPTS
-        ${KMCMAKE_CXX_OPTIONS}
-        PLINKS
-        ${KMCMAKE_DEPS_LINK}
-        PUBLIC
-)
-
-goose_cc_extension(
-        NAMESPACE ${PROJECT_NAME}
-        NAME gnef
-        SOURCES
-        normalize/detect_language.cc
-        normalize/normalize.cc
-        gnef_extension.cc
-        instance/fasttext.cc
-        DEPS
-        goose_platform
-        ABI_TYPE
-        "CPP"
-        CXXOPTS
-        ${KMCMAKE_CXX_OPTIONS}
-        PLINKS
-        ${KMCMAKE_DEPS_LINK}
-        PUBLIC
-)
-#[[
-set(EXTENSION_CONFIG_BUILD ON)
-include(extension_build_tools)
-
-set(TARGET_NAME gnef)
-
-set(EXTENSION_NAME ${TARGET_NAME}_extension)
-set(LOADABLE_EXTENSION_NAME ${TARGET_NAME}_loadable_extension)
-set(GOOSE_EXTENSION_GNEF_EXT_VERSION "0.1.0")
-build_static_extension(${TARGET_NAME} gnef_extension.cc)
-build_loadable_extension(${TARGET_NAME} " " gnef_extension.cc)
-
-target_link_libraries(${EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
-target_link_libraries(${LOADABLE_EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
-]]
-
 file(COPY ${PROJECT_SOURCE_DIR}/dict DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 set(DICT_FILES
@@ -123,6 +46,104 @@ kmcmake_cc_library(
         PUBLIC
 )
 
+
+set(PROTO_FILES
+        proto/embedding.proto
+        proto/intent.proto
+        proto/ner.proto
+        proto/ngram.proto
+        proto/normalize.proto
+        proto/rewrite.proto
+        proto/search.proto
+        proto/segment.proto
+        proto/semantic.proto
+        proto/config.proto
+)
+
+kmcmake_cc_proto(
+        NAME proto_obj
+        PROTOS
+        ${PROTO_FILES}
+        OUTDIR
+        ${PROJECT_SOURCE_DIR}
+)
+
+kmcmake_cc_object(
+        NAMESPACE gnef
+        NAME proto_obj
+        SOURCES
+        ${proto_obj_SRCS}
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+)
+
+kmcmake_cc_library(
+        NAMESPACE ${PROJECT_NAME}
+        NAME proto
+        SOURCES
+        api/config.cc
+        api/normalize.cc
+        api/dict.cc
+        api/initializer.cc
+        instance/pinyin.cc
+        instance/fasttext.cc
+        instance/hadar.cc
+        OBJECTS
+        proto_obj
+        DEPS
+        proto_obj
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        PLINKS
+        gnef::gnef_dict_static
+        ${KMCMAKE_DEPS_LINK}
+        PUBLIC
+)
+
+goose_cc_extension(
+        NAMESPACE ${PROJECT_NAME}
+        NAME gnef
+        SOURCES
+        gnef_extension.cc
+        instance/fasttext.cc
+        sql/registry.cc
+        sql/initializer.cc
+        sql/normalize/registry.cc
+        sql/normalize/detect_language.cc
+        sql/normalize/pinyin.cc
+        sql/normalize/hadar.cc
+        sql/normalize/normalize.cc
+        sql/config/registry.cc
+        sql/config/detect.cc
+        sql/config/normalize.cc
+        sql/dict/registry.cc
+        DEPS
+        goose_platform
+        ABI_TYPE
+        "CPP"
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        PLINKS
+        gnef::proto_static
+        ${KMCMAKE_DEPS_LINK}
+        PUBLIC
+)
+#[[
+set(EXTENSION_CONFIG_BUILD ON)
+include(extension_build_tools)
+
+set(TARGET_NAME gnef)
+
+set(EXTENSION_NAME ${TARGET_NAME}_extension)
+set(LOADABLE_EXTENSION_NAME ${TARGET_NAME}_loadable_extension)
+set(GOOSE_EXTENSION_GNEF_EXT_VERSION "0.1.0")
+build_static_extension(${TARGET_NAME} gnef_extension.cc)
+build_loadable_extension(${TARGET_NAME} " " gnef_extension.cc)
+
+target_link_libraries(${EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
+target_link_libraries(${LOADABLE_EXTENSION_NAME}  ${KMCMAKE_DEPS_LINK})
+]]
+
 kmcmake_cc_binary(
         NAMESPACE ${PROJECT_NAME}
         NAME gnef
@@ -138,6 +159,20 @@ kmcmake_cc_binary(
         goose::vss_static
         goose::httpfs_static
         gnef::gnef_dict_static
+        ${KMCMAKE_DEPS_LINK}
+        LINKOPTS
+        ${KMCMAKE_STATIC_BIN_OPTION}
+)
+kmcmake_cc_binary(
+        NAMESPACE ${PROJECT_NAME}
+        NAME nor
+        SOURCES
+        nor.cc
+        CXXOPTS
+        ${KMCMAKE_CXX_OPTIONS}
+        LINKS
+        gnef::gnef_dict_static
+        gnef::proto_static
         ${KMCMAKE_DEPS_LINK}
         LINKOPTS
         ${KMCMAKE_STATIC_BIN_OPTION}

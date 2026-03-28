@@ -13,18 +13,19 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include <goose/goose.h>
 
-  message EmbeddingSetting {
-    string model = 1;
-  }
-message EmbeddingRequest {
-  string query = 1;
-  EmbeddingSetting setting = 2;
-}
+namespace gnef::sql {
+    void load_normalize(goose::ExtensionLoader &loader);
+} // gnef::sql
 
-message EmbeddingResponse {
-  repeated float feature = 1;
-}
+/// for internal call
+namespace gnef::sql::internal {
+    void load_detect_lang(goose::ExtensionLoader &loader);
+
+    void load_pinyin(goose::ExtensionLoader &loader);
+    void load_convert(goose::ExtensionLoader &loader);
+    void load_nor(goose::ExtensionLoader &loader);
+} // namespace gnef::sql::internal

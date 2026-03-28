@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 #pragma once
 
 #include <goose/goose.h>
 
-namespace gnef {
-    void load_normalize(goose::ExtensionLoader &loader);
-}  // namespace gnef
+namespace gnef::sql {
 
+    void initialize_version(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+
+    void pragma_initialize_gnef(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+}  // namespace gnef::sql

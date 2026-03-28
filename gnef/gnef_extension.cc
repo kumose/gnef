@@ -1,4 +1,3 @@
-// Copyright (C) DuckDB inc. and its affiliates.
 // Copyright (C) Kumo inc. and its affiliates.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,40 +18,17 @@
 #include <goose/common/exception.h>
 #include <goose/function/scalar_function.h>
 #include <goose/parser/parsed_data/create_scalar_function_info.h>
-#include  <gnef/normalize/normalize.h>
 // OpenSSL linked through vcpkg
 #include <openssl/opensslv.h>
 #include <gnef/version.h>
-#include <gnef/normalize/detect_language.h>
+#include <gnef/sql/registry.h>
 
 namespace goose {
-    inline void QuackScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-        auto &name_vector = args.data[0];
-        UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
-            return StringVector::AddString(result, "Quack " + name.GetString() + " 🐥");
-        });
-    }
 
-    inline void QuackOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-        auto &name_vector = args.data[0];
-        UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
-            return StringVector::AddString(result, "Quack " + name.GetString() + ", my linked OpenSSL version is " +
-                                                   OPENSSL_VERSION_TEXT);
-        });
-    }
 
     static void LoadInternal(ExtensionLoader &loader) {
-        // Register a scalar function
-        auto quack_scalar_function = ScalarFunction("quack", {LogicalType::VARCHAR}, LogicalType::VARCHAR,
-                                                    QuackScalarFun);
-        loader.RegisterFunction(quack_scalar_function);
-
-        // Register another scalar function
-        auto quack_openssl_version_scalar_function = ScalarFunction("quack_openssl_version", {LogicalType::VARCHAR},
-                                                                    LogicalType::VARCHAR, QuackOpenSSLVersionScalarFun);
-        loader.RegisterFunction(quack_openssl_version_scalar_function);
         /// normalize
-        gnef::load_normalize(loader);
+        gnef::sql::load_gnef(loader);
     }
 
     void GnefExtension::Load(ExtensionLoader &loader) {

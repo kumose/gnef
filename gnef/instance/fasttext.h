@@ -16,43 +16,35 @@
 #pragma once
 
 #include <fasttext/fasttext.h>
+#include <gnef/instance/double_instance.h>
 
-namespace gnef {
-    class FastTextInstance {
+namespace gnef::api {
+
+    class FtzHandler;
+    class FtzInstance : public DoubleInstance<FtzHandler, FtzInstance> {
     public:
-        static FastTextInstance &instance() {
-            static FastTextInstance instance;
-            return instance;
-        }
+        ~FtzInstance() override = default;
 
-        const fasttext::FastText &bin() const;
+        turbo::Status initialize(const std::string &dict_dir) override;
 
-        const fasttext::FastText &ftz() const;
+    private:
+        friend class DoubleInstance<FtzHandler, FtzInstance>;
+        FtzInstance() = default;
+    };
 
-
-
-        static void init_call(const std::string &bin, const std::string &ftz);
-
-        static std::string dict_name() {
-            return instance()._dict_bin;
-        }
-
-        static bool is_bin_enable() {
-            return !instance()._dict_bin.empty();
-        }
+    class FtzHandler {
+    public:
+        ~FtzHandler() = default;
 
         /// query empty should be
-        static std::vector<std::pair<float, std::string> >  detect_language(std::string_view query, float threshold, std::string_view model);
+        std::vector<std::pair<float, std::string> >  detect_language(std::string_view query, float threshold);
+
+        turbo::Status initialize(const std::string &dict_dir);
     private:
-        FastTextInstance() = default;
-
-        void init(const std::string &bin, const std::string &ftz);
-
-        static void init_call_once(const std::string &bin, const std::string &ftz);
-
-        bool _bin_initialized = false;
-        std::string _dict_bin;
-        mutable fasttext::FastText _bin;
-        mutable fasttext::FastText _ftz;
+        friend class FtzInstance;
+    private:
+        FtzHandler() = default;
+        fasttext::FastText _ftz;
     };
-} // namespace gnef
+}  // gnef::api
+

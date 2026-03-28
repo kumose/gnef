@@ -3,7 +3,10 @@
     "fasttext",
     "goose",
     "jieba",
+    "merak",
+    "taco",
+    "xpinyin",
     "xxd",
-    "merak"
+    "hadar"
   ]
 }

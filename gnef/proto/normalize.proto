@@ -17,29 +17,18 @@ syntax = "proto3";
 
 package kumo.nlp;
 
-enum NormalizeOption {
-    /// no option
-    NORMALIZE_NONE = 0;
-    /// open
-    NORMALIZE_FULL_WIDTH_TO_HALF = 0x1;
-    NORMALIZE_UPPER_CASE_TO_LOWER = 0x2;
-    NORMALIZE_BLANK_TO_ONE_SPACE = 0x4;
-    NORMALIZE_REMOVE_BAD_CHAR = 0x8;
-    NORMALIZE_REMOVE_EMOJI = 0x10;
-}
-
 message NormalizeSetting {
-  bool full_to_half       = 1;
+  bool full_to_half = 1;
   /// enable phrase
-  bool upper_to_lower     = 2;
+  bool upper_to_lower = 2;
   /// continous space to one
-  bool blank_to_one       = 3;
+  bool blank_to_one = 3;
   /// lang detect
-  bool lang_detect       = 4;
+  bool lang_detect = 4;
   /// remove bad char
-  bool remove_bad_char       = 5;
+  bool remove_bad_char = 5;
   /// remove emoji
-  bool remove_emoji          = 6;
+  bool remove_emoji = 6;
   /// remove punctuation_to_space,
   /// if set remove_punctuation,
   /// this no means
@@ -50,11 +39,15 @@ message NormalizeSetting {
   bool zh_to_pin = 9;
   /// chinese to pinyin short 我们 -> wm
   bool zh_to_pin_short = 10;
+  /// hk2s, hk2t, jp2t, s2hk,s2t,s2tw,s2twp,t2hk
+  /// t2jp, t2s, t2tw, tw2s, tw2sp, tw2t
+  repeated string convert = 11;
 };
 
+
 message NormalizeRequest {
-    string query = 1;
-    NormalizeSetting setting = 2;
+  string query = 1;
+  NormalizeSetting setting = 2;
 }
 
 message NormalizeResponse {
@@ -62,4 +55,7 @@ message NormalizeResponse {
   string query = 1;
   string pinyin = 2;
   string pinyin_short = 3;
+  string lang  = 4;
+  double lang_probe = 5;
+  repeated string convert = 6;
 }
