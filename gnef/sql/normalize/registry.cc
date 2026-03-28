@@ -15,6 +15,7 @@
 
 #include <gnef/sql/normalize/registry.h>
 #include <gnef/sql/normalize/detect_language.h>
+#include <gnef/sql/normalize/pinyin.h>
 
 /// for internal call
 namespace gnef::sql::internal {
@@ -48,6 +49,26 @@ namespace gnef::sql::internal {
         loader.RegisterFunction(detect_table_functions);
 
     }
+
+    void load_pinyin(goose::ExtensionLoader &loader) {
+        goose::ScalarFunctionSet chinese_pinyin("chinese_pinyin");
+        /// one select detect_lang('I am lothar');
+        chinese_pinyin.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::chinese_pinyin));
+        chinese_pinyin.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR, goose::LogicalType::INTEGER}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::chinese_pinyin));
+
+
+        loader.RegisterFunction(chinese_pinyin);
+
+        goose::ScalarFunctionSet chinese_pinyin_short("chinese_pinyin_short");
+        chinese_pinyin_short.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::chinese_pinyin_short));
+        loader.RegisterFunction(chinese_pinyin_short);
+
+
+
+    }
 }  // namespace gnef::sql::internal
 
 
@@ -57,5 +78,6 @@ namespace gnef::sql {
     void load_normalize(goose::ExtensionLoader &loader) {
         /// load detect lang
         internal::load_detect_lang(loader);
+        internal::load_pinyin(loader);
     }
 }  // gnef::sql

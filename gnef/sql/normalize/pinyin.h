@@ -19,12 +19,10 @@
 
 namespace gnef::sql {
 
-    void load_normalize(goose::ExtensionLoader &loader);
-}  // gnef::sql
-
-/// for internal call
-namespace gnef::sql::internal {
-    void load_detect_lang(goose::ExtensionLoader &loader);
-    void load_pinyin(goose::ExtensionLoader &loader);
-}  // namespace gnef::sql::internal
-
+    ///////////////////////////////////////////////////////////////////////
+    /// function chinese_pinyin, usage
+    /// one select chinese_pinyin('舞林大会') -> "wu lin da hui";
+    /// two select chinese_pinyin_short('武林外传') -> "wlwz";
+    void chinese_pinyin(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+    void chinese_pinyin_short(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+}  // namespace gnef::sql

@@ -110,6 +110,7 @@ goose_cc_extension(
         sql/initializer.cc
         sql/normalize/registry.cc
         sql/normalize/detect_language.cc
+        sql/normalize/pinyin.cc
         sql/config/registry.cc
         sql/config/detect.cc
         sql/config/normalize.cc
