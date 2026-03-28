@@ -112,6 +112,7 @@ goose_cc_extension(
         sql/normalize/detect_language.cc
         sql/normalize/pinyin.cc
         sql/normalize/hadar.cc
+        sql/normalize/normalize.cc
         sql/config/registry.cc
         sql/config/detect.cc
         sql/config/normalize.cc

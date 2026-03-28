@@ -17,6 +17,7 @@
 #include <gnef/sql/normalize/detect_language.h>
 #include <gnef/sql/normalize/pinyin.h>
 #include <gnef/sql/normalize/hadar.h>
+#include <gnef/sql/normalize/normalize.h>
 
 /// for internal call
 namespace gnef::sql::internal {
@@ -104,6 +105,17 @@ namespace gnef::sql::internal {
                                                       gnef::sql::convert_hk2s));
 
     }
+
+    void load_nor(goose::ExtensionLoader &loader) {
+        loader.RegisterFunction(goose::ScalarFunction("normalize_default", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::normalize_default));
+
+        loader.RegisterFunction(goose::ScalarFunction("normalize_default_setting", {}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::normalize_default_setting));
+
+        loader.RegisterFunction(goose::ScalarFunction("normalize_json", {goose::LogicalType::VARCHAR, goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                     gnef::sql::normalize_json));
+    }
 }  // namespace gnef::sql::internal
 
 
@@ -115,5 +127,6 @@ namespace gnef::sql {
         internal::load_detect_lang(loader);
         internal::load_pinyin(loader);
         internal::load_convert(loader);
+        internal::load_nor(loader);
     }
 }  // gnef::sql

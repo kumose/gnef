@@ -27,4 +27,5 @@ namespace gnef::sql::internal {
 
     void load_pinyin(goose::ExtensionLoader &loader);
     void load_convert(goose::ExtensionLoader &loader);
+    void load_nor(goose::ExtensionLoader &loader);
 } // namespace gnef::sql::internal

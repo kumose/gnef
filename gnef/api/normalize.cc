@@ -40,7 +40,8 @@ namespace gnef::api {
             auto vp = rv.toStdVector();
             std::string sh;
             for (auto &v : vp) {
-                if (v.empty() || turbo::ascii_isblank(v[0] )|| turbo::ascii_isspace(v[0])) {
+                auto c = v[0];
+                if (v.empty() || turbo::ascii_isblank(c )|| turbo::ascii_isspace(c) || !turbo::ascii_isalpha(c)) {
                     continue;
                 }
                 sh.push_back(v[0]);
