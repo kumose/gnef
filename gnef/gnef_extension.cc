@@ -18,11 +18,10 @@
 #include <goose/common/exception.h>
 #include <goose/function/scalar_function.h>
 #include <goose/parser/parsed_data/create_scalar_function_info.h>
-#include  <gnef/normalize/normalize.h>
 // OpenSSL linked through vcpkg
 #include <openssl/opensslv.h>
 #include <gnef/version.h>
-#include <gnef/normalize/detect_language.h>
+#include <gnef/sql/registry.h>
 
 namespace goose {
     inline void QuackScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
@@ -51,7 +50,7 @@ namespace goose {
                                                                     LogicalType::VARCHAR, QuackOpenSSLVersionScalarFun);
         loader.RegisterFunction(quack_openssl_version_scalar_function);
         /// normalize
-        gnef::load_normalize(loader);
+        gnef::sql::load_gnef(loader);
     }
 
     void GnefExtension::Load(ExtensionLoader &loader) {

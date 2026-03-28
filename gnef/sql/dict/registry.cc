@@ -13,27 +13,14 @@
 // limitations under the License.
 //
 
-#pragma once
 
-#include <gnef/proto/config.pb.h>
+#include <gnef/sql/registry.h>
+#include <gnef/sql/dict/registry.h>
 
-#include <turbo/utility/status.h>
+namespace gnef::sql {
 
-namespace gnef::api {
+    void load_dict(goose::ExtensionLoader &loader) {
 
-    turbo::Status initialize_gnef();
+    }
 
-    turbo::Status initialize_gnef(const kumo::nlp::Config &config);
-
-    //////////////////////////////////////////////////
-    /// try parse to kumo::nlp::Config
-    /// 1. try json
-    /// 2. try binary
-    /// 3. try filepath
-    ///    a. try json
-    ///    b. try binary
-    turbo::Status initialize_gnef(const std::string &str);
-
-    size_t initialize_version();
-
-}
+}  // gnef::sql

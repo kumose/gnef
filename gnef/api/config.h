@@ -20,7 +20,7 @@
 #include <gnef/proto/config.pb.h>
 #include  <turbo/utility/status.h>
 
-namespace gnef {
+namespace gnef::api {
 
     struct DetectConfig {
         std::string unknown{"unknown"};
@@ -92,4 +92,4 @@ namespace gnef {
         mutable taco::DoublyBufferedData<std::shared_ptr<DetectConfig> > _detect_config;
         mutable taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> > _kv_config;
     };
-} // namespace gnef
+} // namespace gnef::api

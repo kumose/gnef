@@ -104,10 +104,16 @@ goose_cc_extension(
         NAMESPACE ${PROJECT_NAME}
         NAME gnef
         SOURCES
-        normalize/detect_language.cc
-        normalize/normalize.cc
         gnef_extension.cc
         instance/fasttext.cc
+        sql/registry.cc
+        sql/initializer.cc
+        sql/normalize/registry.cc
+        sql/normalize/detect_language.cc
+        sql/config/registry.cc
+        sql/config/detect.cc
+        sql/config/normalize.cc
+        sql/dict/registry.cc
         DEPS
         goose_platform
         ABI_TYPE
@@ -115,6 +121,7 @@ goose_cc_extension(
         CXXOPTS
         ${KMCMAKE_CXX_OPTIONS}
         PLINKS
+        gnef::proto_static
         ${KMCMAKE_DEPS_LINK}
         PUBLIC
 )

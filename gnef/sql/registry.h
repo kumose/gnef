@@ -15,25 +15,12 @@
 
 #pragma once
 
-#include <gnef/proto/config.pb.h>
+#include <goose/goose.h>
 
-#include <turbo/utility/status.h>
+namespace gnef::sql {
+    void load_gnef(goose::ExtensionLoader &loader);
+}  // gnef::sql
 
-namespace gnef::api {
-
-    turbo::Status initialize_gnef();
-
-    turbo::Status initialize_gnef(const kumo::nlp::Config &config);
-
-    //////////////////////////////////////////////////
-    /// try parse to kumo::nlp::Config
-    /// 1. try json
-    /// 2. try binary
-    /// 3. try filepath
-    ///    a. try json
-    ///    b. try binary
-    turbo::Status initialize_gnef(const std::string &str);
-
-    size_t initialize_version();
-
-}
+namespace gnef::sql::internal {
+    void load_initializer(goose::ExtensionLoader &loader);
+}  // namespace gnef::sql::internal

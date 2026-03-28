@@ -19,8 +19,21 @@
 #include <gnef/instance/pinyin.h>
 #include <gnef/instance/hadar.h>
 #include <gnef/instance/fasttext.h>
+#include <merak/protobuf.h>
+#include <turbo/files/file_util.h>
 
 namespace gnef::api {
+
+    std::atomic<size_t> init_version{0};
+
+    turbo::Status initialize_gnef() {
+        kumo::nlp::Config config;
+        return initialize_gnef(config);
+    }
+
+    size_t initialize_version() {
+        return init_version.load(std::memory_order_relaxed);
+    }
 
     turbo::Status initialize_gnef(const kumo::nlp::Config &config) {
         /// init config
@@ -41,7 +54,34 @@ namespace gnef::api {
         TURBO_RETURN_NOT_OK(HadarInstance::instance().initialize(DictManager::instance().hadar_dict()));
 
         TURBO_RETURN_NOT_OK(FtzInstance::instance().initialize(DictManager::instance().fasttext_dict()));
+        init_version.fetch_add(1, std::memory_order_acquire);
         return turbo::OkStatus();
     }
 
+    turbo::Status initialize_gnef(const std::string &str) {
+        kumo::nlp::Config config;
+        auto rs = merak::json_to_proto_message(str, &config);
+        if (rs.ok()) {
+            return initialize_gnef(config);
+        }
+        config.Clear();
+        if (config.ParseFromString(str)) {
+            return initialize_gnef(config);
+        }
+
+        TURBO_RETURN_NOT_OK(turbo::exists(str));
+
+        std::string context;
+        TURBO_RETURN_NOT_OK(turbo::read_file_to_string(str, &context));
+        config.Clear();
+        rs = merak::json_to_proto_message(context, &config);
+        if (rs.ok()) {
+            return initialize_gnef(config);
+        }
+        config.Clear();
+        if (config.ParseFromString(context)) {
+            return initialize_gnef(config);
+        }
+        return turbo::invalid_argument_error("not known config type");
+    }
 }

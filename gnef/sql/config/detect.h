@@ -15,25 +15,8 @@
 
 #pragma once
 
-#include <gnef/proto/config.pb.h>
+#include <goose/goose.h>
 
-#include <turbo/utility/status.h>
-
-namespace gnef::api {
-
-    turbo::Status initialize_gnef();
-
-    turbo::Status initialize_gnef(const kumo::nlp::Config &config);
-
-    //////////////////////////////////////////////////
-    /// try parse to kumo::nlp::Config
-    /// 1. try json
-    /// 2. try binary
-    /// 3. try filepath
-    ///    a. try json
-    ///    b. try binary
-    turbo::Status initialize_gnef(const std::string &str);
-
-    size_t initialize_version();
-
-}
+namespace gnef::sql {
+    void pragma_detect_config(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+}  // gnef::sql

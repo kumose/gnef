@@ -16,7 +16,7 @@
 #include <gnef/api/config.h>
 #include <merak/protobuf.h>
 
-namespace gnef {
+namespace gnef::api {
 
     const std::string GnefConfig::kSystemDictDirectory = "/tmp/gnefdict";
 
@@ -134,4 +134,4 @@ namespace gnef {
         TURBO_RETURN_NOT_OK(merak::json_to_proto_message(json, &config));
         return load_pb_config(config);
     }
-}  // namespace gnef
+}  // namespace gnef::api
