@@ -18,13 +18,13 @@
 #include <goose/goose.h>
 
 namespace gnef::sql {
-
     void load_normalize(goose::ExtensionLoader &loader);
-}  // gnef::sql
+} // gnef::sql
 
 /// for internal call
 namespace gnef::sql::internal {
     void load_detect_lang(goose::ExtensionLoader &loader);
-    void load_pinyin(goose::ExtensionLoader &loader);
-}  // namespace gnef::sql::internal
 
+    void load_pinyin(goose::ExtensionLoader &loader);
+    void load_convert(goose::ExtensionLoader &loader);
+} // namespace gnef::sql::internal

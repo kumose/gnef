@@ -16,6 +16,7 @@
 #include <gnef/sql/normalize/registry.h>
 #include <gnef/sql/normalize/detect_language.h>
 #include <gnef/sql/normalize/pinyin.h>
+#include <gnef/sql/normalize/hadar.h>
 
 /// for internal call
 namespace gnef::sql::internal {
@@ -69,6 +70,40 @@ namespace gnef::sql::internal {
 
 
     }
+
+    void load_convert (goose::ExtensionLoader &loader) {
+        loader.RegisterFunction(goose::ScalarFunction("convert_hadar", {goose::LogicalType::VARCHAR, goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_hadar));
+        loader.RegisterFunction(goose::ScalarFunction("convert_tw2t", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_tw2t));
+        loader.RegisterFunction(goose::ScalarFunction("convert_tw2sp", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_tw2sp));
+        loader.RegisterFunction(goose::ScalarFunction("convert_tw2s", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_tw2s));
+        loader.RegisterFunction(goose::ScalarFunction("convert_t2tw", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_t2tw));
+        loader.RegisterFunction(goose::ScalarFunction("convert_t2s", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_t2s));
+        loader.RegisterFunction(goose::ScalarFunction("convert_t2jp", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_t2jp));
+        loader.RegisterFunction(goose::ScalarFunction("convert_t2hk", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_t2hk));
+        loader.RegisterFunction(goose::ScalarFunction("convert_s2twp", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_s2twp));
+        loader.RegisterFunction(goose::ScalarFunction("convert_s2tw", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_s2tw));
+        loader.RegisterFunction(goose::ScalarFunction("convert_s2t", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_s2t));
+        loader.RegisterFunction(goose::ScalarFunction("convert_s2hk", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_s2hk));
+        loader.RegisterFunction(goose::ScalarFunction("convert_jp2t", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_jp2t));
+        loader.RegisterFunction(goose::ScalarFunction("convert_hk2t", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_hk2t));
+        loader.RegisterFunction(goose::ScalarFunction("convert_hk2s", {goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
+                                                      gnef::sql::convert_hk2s));
+
+    }
 }  // namespace gnef::sql::internal
 
 
@@ -79,5 +114,6 @@ namespace gnef::sql {
         /// load detect lang
         internal::load_detect_lang(loader);
         internal::load_pinyin(loader);
+        internal::load_convert(loader);
     }
 }  // gnef::sql
