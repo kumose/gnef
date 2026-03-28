@@ -47,6 +47,7 @@ namespace gnef::api {
         auto ptr = std::make_shared<PinyinHandler>();
         TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
         set(ptr);
+        set_init();
         return turbo::OkStatus();
     }
 }  // namespace gnef::api

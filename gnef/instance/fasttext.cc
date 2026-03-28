@@ -14,90 +14,7 @@
 //
 
 #include <gnef/instance/fasttext.h>
-#include <mutex>
-#include <sstream>
-#include <build/gnef/dict/lid.176.ftz.xxd.h>
-#include <gnef/dict/lid.176.ftz.xxd.h>
-#include <turbo/strings/match.h>
 #include <turbo/files/filesystem.h>
-
-namespace gnef {
-
-    std::once_flag fasttext_init;
-
-    void FastTextInstance::init_call_once(const std::string &bin, const std::string &ftz) {
-        std::call_once(fasttext_init,[bin,ftz]() {
-            FastTextInstance::instance().init(bin, ftz);
-        });
-    }
-
-    void FastTextInstance::init_call(const std::string &bin, const std::string &ftz) {
-        init_call_once(bin, ftz);
-    }
-    const fasttext::FastText &FastTextInstance::bin() const {
-        init_call_once("", "");
-        if (_bin_initialized) {
-            return _bin;
-        }
-        return _ftz;
-    }
-
-    const fasttext::FastText &FastTextInstance::ftz() const {
-        init_call_once("", "");
-        return _ftz;
-    }
-    struct MemBuf : std::streambuf {
-        MemBuf(const char* base, size_t size) {
-            char* p(const_cast<char*>(base));
-            this->setg(p, p, p + size);
-        }
-    };
-
-    void FastTextInstance::init(const std::string &bin, const std::string &ftz) {
-        std::cerr << "FastTextInstance::init start"<<std::endl;
-
-        if (!bin.empty()) {
-            _bin.loadModel(bin);
-            _bin_initialized = true;
-        }
-
-
-        std::string tmp_ftz = ftz;
-        if (ftz.empty()) {
-            tmp_ftz = "/tmp/lid.176.bin";
-            std::ofstream ftz_file(tmp_ftz, std::ios::binary | std::ios::trunc);
-            ftz_file.write(gnef::dict::dict_lid_176_ftz.data(), gnef::dict::dict_lid_176_ftz.size());
-            ftz_file.close();
-        }
-
-
-        _ftz.loadModel(tmp_ftz);
-        std::cerr << "FastTextInstance::init done" << std::endl;
-    }
-
-    // Custom zero-copy buffer to satisfy istream requirements
-    struct FastMemBuf : std::streambuf {
-        FastMemBuf(const char* base, size_t size) {
-            char* p(const_cast<char*>(base));
-            this->setg(p, p, p + size);
-        }
-    };
-
-    std::vector<std::pair<float, std::string> > FastTextInstance::detect_language(std::string_view query, float threshold, std::string_view model) {
-        FastMemBuf buf(query.data(), query.size());
-        std::istream ss(&buf);
-        std::vector<std::pair<float, std::string> > predictions;
-
-        if (!instance()._dict_bin.empty() && turbo::equals_ignore_case(model, "bin")) {
-            instance().bin().predictLine(
-           ss, predictions, 1, threshold);
-        } else {
-            instance().ftz().predictLine(
-           ss, predictions, 1, threshold);
-        }
-        return predictions;
-    }
-}  // namespace gnef
 
 namespace gnef::api {
 
@@ -109,6 +26,7 @@ namespace gnef::api {
         ptr.reset(new FtzHandler());
         TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
         set(ptr);
+        set_init();
         return turbo::OkStatus();
     }
     turbo::Status FtzHandler::initialize(const std::string &dict_dir) {

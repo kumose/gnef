@@ -18,6 +18,7 @@
 #include <taco/doubly_buffered_data.h>
 #include <memory>
 #include <turbo/utility/status.h>
+#include <gnef/api/initializer.h>
 
 namespace gnef::api {
 
@@ -33,6 +34,12 @@ namespace gnef::api {
         }
 
         std::shared_ptr<T> get() {
+            if (TURBO_UNLIKELY(!_inited)) {
+                if (_inited == 0) {
+                    throw std::runtime_error("Must Initialize Gnef first!");
+                }
+            }
+
             typename taco::DoublyBufferedData<std::shared_ptr<T> >::ScopedPtr reader;
             _data.read(&reader);
             return *reader;
@@ -49,7 +56,12 @@ namespace gnef::api {
         void set(std::shared_ptr<T> ptr) {
             _data.modify(template_set, ptr);
         }
+    protected:
+        void set_init() {
+            _inited = true;
+        }
     private:
         taco::DoublyBufferedData<std::shared_ptr<T>> _data;
+        bool _inited{false};
     };
 } // namespace gnef::api

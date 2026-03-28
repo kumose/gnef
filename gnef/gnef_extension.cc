@@ -24,31 +24,9 @@
 #include <gnef/sql/registry.h>
 
 namespace goose {
-    inline void QuackScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-        auto &name_vector = args.data[0];
-        UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
-            return StringVector::AddString(result, "Quack " + name.GetString() + " 🐥");
-        });
-    }
 
-    inline void QuackOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-        auto &name_vector = args.data[0];
-        UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
-            return StringVector::AddString(result, "Quack " + name.GetString() + ", my linked OpenSSL version is " +
-                                                   OPENSSL_VERSION_TEXT);
-        });
-    }
 
     static void LoadInternal(ExtensionLoader &loader) {
-        // Register a scalar function
-        auto quack_scalar_function = ScalarFunction("quack", {LogicalType::VARCHAR}, LogicalType::VARCHAR,
-                                                    QuackScalarFun);
-        loader.RegisterFunction(quack_scalar_function);
-
-        // Register another scalar function
-        auto quack_openssl_version_scalar_function = ScalarFunction("quack_openssl_version", {LogicalType::VARCHAR},
-                                                                    LogicalType::VARCHAR, QuackOpenSSLVersionScalarFun);
-        loader.RegisterFunction(quack_openssl_version_scalar_function);
         /// normalize
         gnef::sql::load_gnef(loader);
     }
