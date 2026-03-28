@@ -18,62 +18,16 @@ gnef Project Description
 
 ## demos
 
-### lang detect
+### normalize
 
 ```shell
-./build/gnef/gnef 
-Goose v0.6.10 (Galileo)
-Enter ".help" for usage hints.
-memory GNEF select detect_lang('I and you, Jeff是谁', 0.6, 'bin');
-FastTextInstance::init start
-FastTextInstance::init done
-┌────────────────────────────────────────────────┐
-│ detect_lang('I and you, Jeff是谁', 0.6, 'bin') │                                                                                                                                                                                                                                                         
-│                    varchar                     │                                                                                                                                                                                                                                                         
-├────────────────────────────────────────────────┤                                                                                                                                                                                                                                                         
-│ en                                             │                                                                                                                                                                                                                                                         
-└────────────────────────────────────────────────┘                                                                                                                                                                                                                                                         
-memory GNEF select detect_lang('I and you, Jeff是谁的朋友', 0.6, 'bin');
-┌──────────────────────────────────────────────────────┐
-│ detect_lang('I and you, Jeff是谁的朋友', 0.6, 'bin') │                                                                                                                                                                                                                                                   
-│                       varchar                        │                                                                                                                                                                                                                                                   
-├──────────────────────────────────────────────────────┤                                                                                                                                                                                                                                                   
-│ en                                                   │                                                                                                                                                                                                                                                   
-└──────────────────────────────────────────────────────┘                                                                                                                                                                                                                                                   
-memory GNEF select detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.6, 'bin');
-┌──────────────────────────────────────────────────────────────────┐
-│ detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.6, 'bin') │                                                                                                                                                                                                                                       
-│                             varchar                              │                                                                                                                                                                                                                                       
-├──────────────────────────────────────────────────────────────────┤                                                                                                                                                                                                                                       
-│ unknown                                                          │                                                                                                                                                                                                                                       
-└──────────────────────────────────────────────────────────────────┘                                                                                                                                                                                                                                       
-memory GNEF select detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.1, 'bin');
-┌──────────────────────────────────────────────────────────────────┐
-│ detect_lang('I and you, Jeff是谁的朋友，是洛萨的吧', 0.1, 'bin') │                                                                                                                                                                                                                                       
-│                             varchar                              │                                                                                                                                                                                                                                       
-├──────────────────────────────────────────────────────────────────┤                                                                                                                                                                                                                                       
-│ en                                                               │                                                                                                                                                                                                                                       
-└──────────────────────────────────────────────────────────────────┘                                                                                                                                                                                                                                       
-memory GNEF call detect_lang_table('I and you, 我是人',  0.1, 'bin', '__');
-┌───────────┬───────────┐
-│   lang    │   probe   │                                                                                                                                                                                                                                                                                  
-│  varchar  │   float   │                                                                                                                                                                                                                                                                                  
-├───────────┼───────────┤                                                                                                                                                                                                                                                                                  
-│ label__zh │ 0.9293447 │    
-```
-
-```shell
-./build/gnef/nor '我来了☺A，你呢      啊哈哈'
-FastTextInstance::init start
-FastTextInstance::init done
-{"query":"我来了a 你呢 啊哈哈","pinyin":"wo lai le a ni ne a ha ha","pinyin_short":"wllannahh","lang":"__label__zh","lang_probe":0.9319515824317932}
-
-# 开启转换
-./build/gnef/nor '我来了☺A，你呢      啊哈哈'
-FastTextInstance::init start
-FastTextInstance::init done
-{"query":"我来了a 你呢 啊哈哈","pinyin":"wo lai le a ni ne a ha ha","pinyin_short":"wllannahh","lang":"__label__zh","lang_probe":0.9319515824317932,"convert":["我來了a 你呢 啊哈哈","__err:not found method"]}
-
+elect normalize_json('I , Jeff9是谁的朋友，是洛萨的吧,软件☺，是什么    我看是一只小猫，。是把','{"full_to_half":true,"blank_to_one":true,"remove_bad_char":true,"remove_emoji":true, "remove_punctuation":true, "zh_to_pin":true,  "zh_to_pin_short":true}') as cc; 
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                                   cc                                                                                                                    │                                                                
+│                                                                                                                 varchar                                                                                                                 │                                                                
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤                                                                
+│ {"query":"I Jeff9是谁的朋友是洛萨的吧软件是什么 我看是一只小猫。是把","pinyin":"I Jeff 9 shi shei de peng you shi luo sa de ba ruan jian shi shen me wo kan shi yi zhi xiao mao 。 shi ba","pinyin_short":"IJssdpyslsdbrjssmwksyzxmsb"} │                                                                
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘              
 ```
 ## 🛠️ Build
 
