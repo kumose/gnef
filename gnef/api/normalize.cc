@@ -48,7 +48,8 @@ namespace gnef::api {
             *output.mutable_pinyin_short() = std::move(sh);
         }
         if (setting.lang_detect()) {
-            auto r = FastTextInstance::detect_language(output.query(), 0.6, "ftz");
+            auto ins = FtzInstance::instance().get();
+            auto r = ins->detect_language(output.query(), 0.6);
             if (!r.empty()) {
                 output.set_lang(r[0].second);
                 output.set_lang_probe(r[0].first);

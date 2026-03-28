@@ -57,7 +57,8 @@ namespace gnef::api {
 
         _hadar_dict = _root + "/hadar/";
         _xpinyin_dict = _root + "/xpinyin/dict/";
-        _fasttext_dict = _root + "/fasttext/";
+        auto fasttext_dict = _root + "/fasttext";
+        _fasttext_dict = fasttext_dict + "/dict/";
         std::vector<std::pair<std::string, size_t> > info;
         auto rs = turbo::exists(_root);
         if (rs.ok() && rs.value_or_die()) {
@@ -78,7 +79,7 @@ namespace gnef::api {
         }
         auto gnef_dict = gnef::dict::xxd_gen_files();
         for (auto it: gnef_dict) {
-            TURBO_MOVE_OR_RAISE(auto r, dump_dict(_fasttext_dict, it.first, it.second));
+            TURBO_MOVE_OR_RAISE(auto r, dump_dict(fasttext_dict, it.first, it.second));
             info.push_back(r);
         }
         return info;

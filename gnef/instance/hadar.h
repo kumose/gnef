@@ -74,7 +74,6 @@ namespace gnef::api {
         turbo::Result<std::string> convert(const std::string & message, const std::string & method);
     private:
         friend class HadarInstance;
-        friend std::shared_ptr<HadarHandler> std::make_shared<HadarHandler>();
         HadarHandler() = default;
     private:
         std::unique_ptr<hadar::SimpleConverter> hk2s_;

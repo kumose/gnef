@@ -19,6 +19,7 @@
 #include <build/gnef/dict/lid.176.ftz.xxd.h>
 #include <gnef/dict/lid.176.ftz.xxd.h>
 #include <turbo/strings/match.h>
+#include <turbo/files/filesystem.h>
 
 namespace gnef {
 
@@ -97,3 +98,44 @@ namespace gnef {
         return predictions;
     }
 }  // namespace gnef
+
+namespace gnef::api {
+
+    turbo::Status FtzInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("dict dir is empty");
+        }
+        std::shared_ptr<FtzHandler> ptr;
+        ptr.reset(new FtzHandler());
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        return turbo::OkStatus();
+    }
+    turbo::Status FtzHandler::initialize(const std::string &dict_dir) {
+        auto path = std::string(dict_dir) + "/lid.176.ftz";
+        TURBO_MOVE_OR_RAISE(auto e, turbo::exists(path));
+        if (!e) {
+            return turbo::unavailable_error("dict not found, path: " + path);
+        }
+        _ftz.loadModel(path);
+        return turbo::OkStatus();
+    }
+
+    // Custom zero-copy buffer to satisfy istream requirements
+    struct FastMemBuf : std::streambuf {
+        FastMemBuf(const char* base, size_t size) {
+            char* p(const_cast<char*>(base));
+            this->setg(p, p, p + size);
+        }
+    };
+
+    std::vector<std::pair<float, std::string> >  FtzHandler::detect_language(std::string_view query, float threshold) {
+        FastMemBuf buf(query.data(), query.size());
+        std::istream ss(&buf);
+        std::vector<std::pair<float, std::string> > predictions;
+
+        _ftz.predictLine(
+           ss, predictions, 1, threshold);
+        return predictions;
+    }
+}  // gnef::api

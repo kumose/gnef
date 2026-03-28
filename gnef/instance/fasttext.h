@@ -16,6 +16,7 @@
 #pragma once
 
 #include <fasttext/fasttext.h>
+#include <gnef/instance/double_instance.h>
 
 namespace gnef {
     class FastTextInstance {
@@ -54,4 +55,36 @@ namespace gnef {
         mutable fasttext::FastText _bin;
         mutable fasttext::FastText _ftz;
     };
+
 } // namespace gnef
+
+namespace gnef::api {
+
+    class FtzHandler;
+    class FtzInstance : public DoubleInstance<FtzHandler, FtzInstance> {
+    public:
+        ~FtzInstance() override = default;
+
+        turbo::Status initialize(const std::string &dict_dir) override;
+
+    private:
+        friend class DoubleInstance<FtzHandler, FtzInstance>;
+        FtzInstance() = default;
+    };
+
+    class FtzHandler {
+    public:
+        ~FtzHandler() = default;
+
+        /// query empty should be
+        std::vector<std::pair<float, std::string> >  detect_language(std::string_view query, float threshold);
+
+        turbo::Status initialize(const std::string &dict_dir);
+    private:
+        friend class FtzInstance;
+    private:
+        FtzHandler() = default;
+        fasttext::FastText _ftz;
+    };
+}  // gnef::api
+

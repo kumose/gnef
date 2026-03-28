@@ -255,7 +255,7 @@ namespace gnef::api {
         static constexpr size_t tw2t_hash = 5458; // stable_hash("tw2t");   //
 
         auto qh = stable_hash(lm);
-        std::cout << "qh:" << qh << std::endl;
+
         switch (qh) {
             case hk2s_hash: {
                 if (lm == "hk2s") {

@@ -18,6 +18,7 @@
 #include <gnef/api/dict.h>
 #include <gnef/instance/pinyin.h>
 #include <gnef/instance/hadar.h>
+#include <gnef/instance/fasttext.h>
 
 namespace gnef::api {
 
@@ -38,6 +39,8 @@ namespace gnef::api {
         TURBO_RETURN_NOT_OK(PinyinInstance::instance().initialize(DictManager::instance().xpinyin_dict()));
 
         TURBO_RETURN_NOT_OK(HadarInstance::instance().initialize(DictManager::instance().hadar_dict()));
+
+        TURBO_RETURN_NOT_OK(FtzInstance::instance().initialize(DictManager::instance().fasttext_dict()));
         return turbo::OkStatus();
     }
 
