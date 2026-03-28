@@ -206,81 +206,146 @@ namespace gnef::api {
         }
     }
 
-    std::unique_ptr<hadar::SimpleConverter> hk2s_;
-    std::unique_ptr<hadar::SimpleConverter> hk2t_;
-    std::unique_ptr<hadar::SimpleConverter> jp2t_;
-    std::unique_ptr<hadar::SimpleConverter> s2hk_;
-    std::unique_ptr<hadar::SimpleConverter> s2t_;
-    std::unique_ptr<hadar::SimpleConverter> s2tw_;
-    std::unique_ptr<hadar::SimpleConverter> s2twp_;
-    std::unique_ptr<hadar::SimpleConverter> t2hk_;
-    std::unique_ptr<hadar::SimpleConverter> t2jp_;
-    std::unique_ptr<hadar::SimpleConverter> t2s_;
-    std::unique_ptr<hadar::SimpleConverter> t2tw_;
-    std::unique_ptr<hadar::SimpleConverter> tw2s_;
-    std::unique_ptr<hadar::SimpleConverter> tw2sp_;
-    std::unique_ptr<hadar::SimpleConverter> tw2t_;
-
-    turbo::Result<std::string> HadarHandler::convert(const std::string & message, const std::string & method) {
+    static size_t stable_hash(std::string_view str) {
+        size_t hash = 0;
+        int i = 0;
+        for (auto &c: str) {
+            ++i;
+            if (c >= 'a' && c <= 'z') {
+                hash += c + i;
+                continue;
+            }
+            /// number
+            hash += c * 101;
+            i += c;
+        }
+        return hash;
+    }
+    /*
+    * std::cout << "hk2s_hash:" << hk2s_hash << std::endl;
+    std::cout << "hk2t_hash:" << hk2t_hash << std::endl;
+    std::cout << "jp2t_hash:" << jp2t_hash << std::endl;
+    std::cout << "s2hk_hash:" << s2hk_hash << std::endl;
+    std::cout << "s2t_hash:" << s2t_hash << std::endl;
+    std::cout << "s2tw_hash:" << s2tw_hash << std::endl;
+    std::cout << "s2twp_hash:" << s2twp_hash << std::endl;
+    std::cout << "t2hk_hash:" << t2hk_hash << std::endl;
+    std::cout << "t2jp_hash:" << t2jp_hash << std::endl;
+    std::cout << "t2s_hash:" << t2s_hash << std::endl;
+    std::cout << "t2tw_hash:" << t2tw_hash << std::endl;
+    std::cout << "tw2s_hash:" << tw2s_hash << std::endl;
+    std::cout << "tw2sp_hash:" << tw2sp_hash << std::endl;
+    std::cout << "tw2t_hash:" << tw2t_hash << std::endl;
+    */
+    turbo::Result<std::string> HadarHandler::convert(const std::string &message, const std::string &method) {
         auto lm = turbo::str_to_lower(method);
-        static size_t hk2s_hash = std::hash<std::string>{}("hk2s");
-        static size_t hk2t_hash = std::hash<std::string>{}("hk2t");
-        static size_t jp2t_hash = std::hash<std::string>{}("jp2t");
-        static size_t s2hk_hash = std::hash<std::string>{}("s2hk");
-        static size_t s2t_hash = std::hash<std::string>{}("s2t");
-        static size_t s2tw_hash = std::hash<std::string>{}("s2tw");
-        static size_t s2twp_hash = std::hash<std::string>{}("s2twp");
-        static size_t t2hk_hash = std::hash<std::string>{}("t2hk");
-        static size_t t2jp_hash = std::hash<std::string>{}("t2jp");
-        static size_t t2s_hash = std::hash<std::string>{}("t2s");
-        static size_t t2tw_hash = std::hash<std::string>{}("t2tw");
-        static size_t tw2s_hash = std::hash<std::string>{}("tw2s");
-        static size_t tw2sp_hash = std::hash<std::string>{}("tw2sp");
-        static size_t tw2t_hash = std::hash<std::string>{}("tw2t");
+        static constexpr size_t hk2s_hash = 5433; //stable_hash("hk2s");  //
+        static constexpr size_t hk2t_hash = 5434; // stable_hash("hk2t");  //
+        static constexpr size_t jp2t_hash = 5441; // stable_hash("jp2t");  //
+        static constexpr size_t s2hk_hash = 5484; // stable_hash("s2hk");  //
+        static constexpr size_t s2t_hash = 5335; // stable_hash("s2t");    //
+        static constexpr size_t s2tw_hash = 5508; // stable_hash("s2tw");  //
+        static constexpr size_t s2twp_hash = 5675; // stable_hash("s2twp"); //
+        static constexpr size_t t2hk_hash = 5485; // stable_hash("t2hk");   //
+        static constexpr size_t t2jp_hash = 5492; // stable_hash("t2jp");   //
+        static constexpr size_t t2s_hash = 5335; // stable_hash("t2s");     //
+        static constexpr size_t t2tw_hash = 5509; // stable_hash("t2tw");   //
+        static constexpr size_t tw2s_hash = 5457; // stable_hash("tw2s");   //
+        static constexpr size_t tw2sp_hash = 5624; // stable_hash("tw2sp");  //
+        static constexpr size_t tw2t_hash = 5458; // stable_hash("tw2t");   //
 
-        auto qh = std::hash<std::string>{}("lm");
-        if (lm == "hk2s") {
-            return hk2s_->Convert(message);
+        auto qh = stable_hash(lm);
+        std::cout << "qh:" << qh << std::endl;
+        switch (qh) {
+            case hk2s_hash: {
+                if (lm == "hk2s") {
+                    return hk2s_->Convert(message);
+                }
+                break;
+            }
+            case hk2t_hash: {
+                if (lm == "hk2t") {
+                    return hk2t_->Convert(message);
+                }
+                break;
+            }
+            case jp2t_hash: {
+                if (lm == "jp2t") {
+                    return jp2t_->Convert(message);
+                }
+                break;
+            }
+            case s2hk_hash: {
+                if (lm == "s2hk") {
+                    return s2hk_->Convert(message);
+                }
+                break;
+            }
+            case s2t_hash: {
+                /// t2s_hash is same
+                if (lm == "s2t") {
+                    return s2t_->Convert(message);
+                }
+                if (lm == "t2s") {
+                    return t2s_->Convert(message);
+                }
+                break;
+            }
+            case s2tw_hash: {
+                if (lm == "s2tw") {
+                    return s2tw_->Convert(message);
+                }
+                break;
+            }
+            case s2twp_hash: {
+                if (lm == "s2twp") {
+                    return s2twp_->Convert(message);
+                }
+                break;
+            }
+            case t2hk_hash: {
+                if (lm == "t2hk") {
+                    return t2hk_->Convert(message);
+                }
+                break;
+            }
+            case t2jp_hash: {
+                if (lm == "t2jp") {
+                    return t2jp_->Convert(message);
+                }
+                break;
+            }
+
+            case t2tw_hash: {
+                if (lm == "t2tw") {
+                    return t2tw_->Convert(message);
+                }
+                break;
+            }
+            case tw2s_hash: {
+                if (lm == "tw2s") {
+                    return tw2s_->Convert(message);
+                }
+                break;
+            }
+            case tw2sp_hash: {
+                if (lm == "tw2sp") {
+                    return tw2sp_->Convert(message);
+                }
+                break;
+            }
+            case tw2t_hash: {
+                if (lm == "tw2t") {
+                    return tw2t_->Convert(message);
+                }
+                break;
+            }
+            default: {
+                break;
+            }
         }
-        if (lm == "hk2t") {
-            return hk2t_->Convert(message);
-        }
-        if (lm == "jp2t") {
-            return jp2t_->Convert(message);
-        }
-        if (lm == "s2hk") {
-            return s2hk_->Convert(message);
-        }
-        if (lm == "s2t") {
-            return s2t_->Convert(message);
-        }
-        if (lm == "s2tw") {
-            return s2tw_->Convert(message);
-        }
-        if (lm == "s2twp") {
-            return s2twp_->Convert(message);
-        }
-        if (lm == "t2hk") {
-            return t2hk_->Convert(message);
-        }
-        if (lm == "t2jp") {
-            return t2jp_->Convert(message);
-        }
-        if (lm == "t2s") {
-            return t2s_->Convert(message);
-        }
-        if (lm == "t2tw") {
-            return t2tw_->Convert(message);
-        }
-        if (lm == "tw2s") {
-            return tw2s_->Convert(message);
-        }
-        if (lm == "tw2sp") {
-            return tw2sp_->Convert(message);
-        }
-        if (lm == "tw2t") {
-            return tw2t_->Convert(message);
-        }
+
+
         return turbo::not_found_error("not found method");
     }
 
