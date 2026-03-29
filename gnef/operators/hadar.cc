@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include <gnef/instance/hadar.h>
+#include <gnef/operators/hadar.h>
 #include <turbo/strings/match.h>
 
 namespace gnef::api {
@@ -349,15 +349,4 @@ namespace gnef::api {
         return turbo::not_found_error("not found method");
     }
 
-    turbo::Status HadarInstance::initialize(const std::string &dict_dir) {
-        if (dict_dir.empty()) {
-            return turbo::invalid_argument_error("dict dir is empty");
-        }
-        std::shared_ptr<HadarHandler> ptr;
-        ptr.reset(new HadarHandler());
-        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
-        set(ptr);
-        set_init();
-        return turbo::OkStatus();
-    }
 } // namespace gnef::api

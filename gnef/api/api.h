@@ -13,24 +13,14 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include <gnef/api/config.h>
+#include <gnef/api/dict.h>
+#include <gnef/api/initializer.h>
+#include <gnef/api/normalize.h>
+#include <gnef/api/segment.h>
 
-import "gnef/proto/segment.proto";
+#include <gnef/operators/jieba.h>
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
-
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+#include <gnef/instance/segmenter.h>

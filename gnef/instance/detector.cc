@@ -13,24 +13,22 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#include <gnef/instance/detector.h>
+#include <turbo/files/filesystem.h>
+#include <gnef/operators/fasttext.h>
 
-package kumo.nlp;
+namespace gnef::api {
 
-import "gnef/proto/segment.proto";
+    turbo::Status LangDetectorInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("dict dir is empty");
+        }
+        std::shared_ptr<FtzHandler> ptr;
+        ptr.reset(new FtzHandler());
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        set_init();
+        return turbo::OkStatus();
+    }
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
-
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+}  // gnef::api

@@ -23,6 +23,9 @@ message SegmentSetting {
   bool phrase     = 2;
 };
 
+/// this is used by search and offline,
+/// for proto compatible,
+/// Defined here for reusability across different business modules.
 message TermBasicWeight {
   /// one word
   string term = 1;
@@ -51,6 +54,9 @@ message TermInfo {
   int32 char_length = 7;
 };
 
+/// most simple, we always using the main term, but when we conside to searching,
+/// we need more infos about this term, rewrite or something, so we put an additional
+/// for user to implement it own algorithm field to fill them meaning.
 message SegmentTerm {
   TermInfo main_term = 1;
   repeated TermInfo term_infos = 2;

@@ -85,9 +85,15 @@ kmcmake_cc_library(
         api/normalize.cc
         api/dict.cc
         api/initializer.cc
-        instance/pinyin.cc
-        instance/fasttext.cc
-        instance/hadar.cc
+        api/segment.cc
+        instance/pinyin_convert.cc
+        instance/detector.cc
+        instance/complex_convert.cc
+        instance/segmenter.cc
+        operators/jieba.cc
+        operators/fasttext.cc
+        operators/xpinyin.cc
+        operators/hadar.cc
         OBJECTS
         proto_obj
         DEPS
@@ -105,7 +111,6 @@ goose_cc_extension(
         NAME gnef
         SOURCES
         gnef_extension.cc
-        instance/fasttext.cc
         sql/registry.cc
         sql/initializer.cc
         sql/normalize/registry.cc

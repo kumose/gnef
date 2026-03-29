@@ -99,7 +99,7 @@ set(KMCMAKE_DEPS_LINK
         hadar::hadar_static
         hadar::hadar_data_static
         turbo::turbo_static
-        jieba::dict_static
+        jieba::jieba_dict_static
         xpinyin::xpinyin_static
         xpinyin::xpinyin_dict_static
         fasttext::fasttext_static

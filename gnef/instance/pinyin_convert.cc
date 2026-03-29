@@ -13,27 +13,26 @@
 // limitations under the License.
 //
 
-#pragma once
-
-#include <gnef/proto/config.pb.h>
-
-#include <turbo/utility/status.h>
+#include <mutex>
+#include <gnef/instance/pinyin_convert.h>
+#include <turbo/random/rand_util.h>
+#include <turbo/files/filesystem.h>
+#include <xpinyin/dump_dict.h>
+#include <xpinyin/g2p_global.h>
+#include <gnef/operators/xpinyin.h>
 
 namespace gnef::api {
 
-    turbo::Status initialize_gnef(bool reset = false);
+    turbo::Status PinyinInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("xpinyin initialize dict dir is empty");
+        }
 
-    turbo::Status initialize_gnef(const kumo::nlp::Config &config, bool reset = false);
+        auto ptr = std::make_shared<PinyinHandler>();
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        set_init();
+        return turbo::OkStatus();
+    }
+}  // namespace gnef::api
 
-    //////////////////////////////////////////////////
-    /// try parse to kumo::nlp::Config
-    /// 1. try json
-    /// 2. try binary
-    /// 3. try filepath
-    ///    a. try json
-    ///    b. try binary
-    turbo::Status initialize_gnef(const std::string &str, bool reset = false);
-
-    size_t initialize_version();
-
-}

@@ -17,31 +17,20 @@
 
 #include <fasttext/fasttext.h>
 #include <gnef/instance/double_instance.h>
+#include <gnef/api/normalize.h>
 
 namespace gnef::api {
 
-    class FtzHandler;
-    class FtzInstance : public DoubleInstance<FtzHandler, FtzInstance> {
-    public:
-        ~FtzInstance() override = default;
-
-        turbo::Status initialize(const std::string &dict_dir) override;
-
-    private:
-        friend class DoubleInstance<FtzHandler, FtzInstance>;
-        FtzInstance() = default;
-    };
-
-    class FtzHandler {
+    class FtzHandler : public  LangDetector {
     public:
         ~FtzHandler() = default;
 
         /// query empty should be
-        std::vector<std::pair<float, std::string> >  detect_language(std::string_view query, float threshold);
+        std::vector<std::pair<float, std::string> >  detect_language(std::string_view query, float threshold) override;
 
-        turbo::Status initialize(const std::string &dict_dir);
+        turbo::Status initialize(const std::string &dict_dir) override;
     private:
-        friend class FtzInstance;
+        friend class LangDetectorInstance;
     private:
         FtzHandler() = default;
         fasttext::FastText _ftz;

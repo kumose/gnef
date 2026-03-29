@@ -28,6 +28,8 @@ message EmbeddingRequest {
 
 message EmbeddingItem {
   string label = 1;
+  /// Using bytes might improve performance and optimize storage.
+  /// but that means for users, It introduces more ambiguity regarding endianness, dimensions, and data types.
   repeated float feature = 2;
 }
 

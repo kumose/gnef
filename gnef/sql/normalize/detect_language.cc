@@ -16,13 +16,13 @@
 #include <gnef/sql/normalize/detect_language.h>
 #include <gnef/api/config.h>
 #include <gnef/api/dict.h>
-#include <gnef/instance/fasttext.h>
+#include <gnef/instance/detector.h>
 
 namespace gnef::sql {
 
 
     inline goose::string_t process_detect(std::string_view query, goose::Vector &result, float threshold, std::string_view prefix, std::string_view unknown) {
-        auto processer = gnef::api::FtzInstance::instance().get();
+        auto processer = gnef::api::LangDetectorInstance::instance().get();
         std::vector<std::pair<float, std::string> >
                 predictions = processer->detect_language(query, threshold);
 
@@ -77,7 +77,7 @@ namespace gnef::sql {
     ////////////////////////////////////////////////////
     /// table functions
     inline  std::vector<std::pair<float, std::string> > process_detect_table(std::string_view query, float threshold) {
-        auto processor = gnef::api::FtzInstance::instance().get();
+        auto processor = gnef::api::LangDetectorInstance::instance().get();
         std::vector<std::pair<float, std::string> >
                 predictions = processor->detect_language(query, threshold);
         return predictions;

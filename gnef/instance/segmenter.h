@@ -13,24 +13,23 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include  <jieba/jieba.h>
+#include <turbo/utility/status.h>
+#include <gnef/instance/double_instance.h>
+#include <gnef/api/segment.h>
 
-import "gnef/proto/segment.proto";
+namespace gnef::api {
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
+    class SegmentorInstance : public DoubleInstance<Segmenter, SegmentorInstance> {
+    public:
+        ~SegmentorInstance() override = default;
 
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+        turbo::Status initialize(const std::string &dict_dir) override;
+
+    private:
+        friend class DoubleInstance<Segmenter, SegmentorInstance>;
+        SegmentorInstance() = default;
+    };
+} // namespace gnef::api

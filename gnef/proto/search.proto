@@ -49,7 +49,7 @@ message NlpResult {
     string pinyin_short = 5;
     SegmentResult  terms = 6;
     repeated NerInfo entities = 7;
-    repeated float feature = 8;
+    EmbeddingResponse embeddings = 8;
     repeated NgramInfo ngram = 9;
     repeated TokenInfo tokens = 10;
     repeated RewriteQueryInfo   rewrite = 11;

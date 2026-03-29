@@ -13,19 +13,19 @@
 // limitations under the License.
 //
 
-#include "gnef/instance/hadar.h"
+#include <gnef/instance/complex_convert.h>
 
 #include <gnef/sql/normalize/pinyin.h>
 #include <gnef/api/config.h>
 #include <gnef/api/dict.h>
-#include <gnef/instance/pinyin.h>
+#include <gnef/instance/pinyin_convert.h>
 #include <turbo/strings/ascii.h>
 
 namespace gnef::sql {
 
     void convert_hk2s(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->hk2s(input.GetString());
             if (r.ok()) {
@@ -39,7 +39,7 @@ namespace gnef::sql {
 
     void convert_hk2t(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->hk2t(input.GetString());
             if (r.ok()) {
@@ -53,7 +53,7 @@ namespace gnef::sql {
 
     void convert_jp2t(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->jp2t(input.GetString());
             if (r.ok()) {
@@ -67,7 +67,7 @@ namespace gnef::sql {
 
     void convert_s2hk(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->s2hk(input.GetString());
             if (r.ok()) {
@@ -81,7 +81,7 @@ namespace gnef::sql {
 
     void convert_s2t(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->s2t(input.GetString());
             if (r.ok()) {
@@ -96,7 +96,7 @@ namespace gnef::sql {
 
     void convert_s2tw(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->s2tw(input.GetString());
             if (r.ok()) {
@@ -110,7 +110,7 @@ namespace gnef::sql {
 
     void convert_s2twp(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->s2twp(input.GetString());
             if (r.ok()) {
@@ -124,7 +124,7 @@ namespace gnef::sql {
 
     void convert_t2hk(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->t2hk(input.GetString());
             if (r.ok()) {
@@ -138,7 +138,7 @@ namespace gnef::sql {
 
     void convert_t2jp(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->t2jp(input.GetString());
             if (r.ok()) {
@@ -152,7 +152,7 @@ namespace gnef::sql {
 
     void convert_t2s(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->t2s(input.GetString());
             if (r.ok()) {
@@ -166,7 +166,7 @@ namespace gnef::sql {
 
     void convert_t2tw(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->t2tw(input.GetString());
             if (!r.ok()) {
@@ -180,7 +180,7 @@ namespace gnef::sql {
 
     void convert_tw2s(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->tw2s(input.GetString());
             if (r.ok()) {
@@ -194,7 +194,7 @@ namespace gnef::sql {
 
     void convert_tw2sp(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->tw2sp(input.GetString());
             if (r.ok()) {
@@ -208,7 +208,7 @@ namespace gnef::sql {
 
     void convert_tw2t(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_one = [&](goose::string_t input) {
             auto r = processer->tw2t(input.GetString());
             if (!r.ok()) {
@@ -223,7 +223,7 @@ namespace gnef::sql {
     void convert_hadar(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result) {
         auto &name_vector = args.data[0];
         auto &arg_vector = args.data[1];
-        auto processer = gnef::api::HadarInstance::instance().get();
+        auto processer = gnef::api::ComplexConvertInstance::instance().get();
         auto func_two = [&](goose::string_t input, goose::string_t arg) {
             auto r = processer->convert(input.GetString(), arg.GetString());
             if (r.ok()) {

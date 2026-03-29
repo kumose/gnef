@@ -13,24 +13,25 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include  <xpinyin/pinyin.h>
 
-import "gnef/proto/segment.proto";
+#include <turbo/utility/status.h>
+#include <gnef/instance/double_instance.h>
+#include <gnef/api/normalize.h>
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
+namespace gnef::api {
 
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+
+    class PinyinInstance : public DoubleInstance<ConverPinyin, PinyinInstance> {
+    public:
+        ~PinyinInstance() override = default;
+
+        turbo::Status initialize(const std::string &dict_dir) override;
+
+    private:
+        friend class DoubleInstance<ConverPinyin, PinyinInstance>;
+        PinyinInstance() = default;
+    };
+} // namespace gnef::api

@@ -13,24 +13,22 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#include <gnef/instance/complex_convert.h>
+#include <gnef/operators/hadar.h>
 
-package kumo.nlp;
+#include <turbo/strings/match.h>
 
-import "gnef/proto/segment.proto";
+namespace gnef::api {
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
-
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+    turbo::Status ComplexConvertInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("hadar initialize dict dir is empty");
+        }
+        std::shared_ptr<HadarHandler> ptr;
+        ptr.reset(new HadarHandler());
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        set_init();
+        return turbo::OkStatus();
+    }
+} // namespace gnef::api

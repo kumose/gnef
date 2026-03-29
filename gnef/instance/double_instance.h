@@ -45,6 +45,16 @@ namespace gnef::api {
             return *reader;
         }
 
+        template<typename U>
+        std::shared_ptr<U> dynamic_get() {
+            return std::dynamic_pointer_cast<U>(get());
+        }
+
+        template<typename U>
+        std::shared_ptr<U> static_get() {
+            return std::static_pointer_cast<U>(get());
+        }
+
         static size_t template_set(std::shared_ptr<T> &ref, std::shared_ptr<T> data) {
             ref = data;
             return 1;
