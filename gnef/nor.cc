@@ -46,4 +46,10 @@ int main(int argc, char **argv) {
     for (auto i : t) {
         std::cout << i.first<< ":" << i.second << std::endl;
     }
+    kumo::nlp::SegmentRequest req;
+    req.set_query(argv[1]);
+    req.mutable_setting()->set_enable_pos(true);
+    kumo::nlp::SegmentResult res;
+    gnef::api::segment(req, res);
+    std::cout << res.ShortDebugString() << std::endl;
 }

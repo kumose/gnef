@@ -62,7 +62,52 @@ namespace gnef::api {
         return turbo::OkStatus();
     }
 
-    turbo::Status JiebaHandler::segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResponse &res) const {
+
+    static void merge_jieba_to_pb(const kmjieba::ExtractorWord &word,kumo::nlp::SegmentTerm &out) {
+        auto oterm = out.mutable_main_term();
+        oterm->set_term(word.word);
+        oterm->set_idf(word.weight);
+        auto *ooffset = oterm->mutable_offset()->Add()->mutable_offsets();
+        ooffset->Reserve(word.offsets.size());
+        for (auto &offset : word.offsets) {
+            auto *os = ooffset->Add();
+            os->set_offset(offset.offset);
+            os->set_unicode_length(offset.unicode_length);
+            os->set_unicode_offset(offset.unicode_offset);
+        }
+
+    }
+
+    turbo::Status JiebaHandler::segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const {
+        static constexpr int kTermLimited = 10;
+        auto &q = req.query();
+        auto enable_pos = req.setting().enable_pos();
+        int top_n = req.setting().limited();
+        if (top_n <= 0) {
+            top_n = kTermLimited;
+        }
+        std::vector<kmjieba::ExtractorWord> words;
+        auto *mutable_list = res.mutable_terms();
+        TURBO_RETURN_NOT_OK(_jieba.extractor.extract(q, words, top_n));
+
+        /// avoid if branch in for loop
+        mutable_list->Reserve(words.size());
+        std::cerr << words.size() << " words " <<words<< std::endl;
+        if (enable_pos) {
+            for (auto &w : words) {
+                kumo::nlp::SegmentTerm term;
+                merge_jieba_to_pb(w, term);
+                auto pos = _jieba.lookup_tag(w.word);
+                term.mutable_main_term()->set_pos(pos);
+                *mutable_list->Add() = std::move(term);
+            }
+        } else {
+            for (auto &w : words) {
+                kumo::nlp::SegmentTerm term;
+                merge_jieba_to_pb(w, term);
+                *mutable_list->Add() = std::move(term);
+            }
+        }
         return turbo::OkStatus();
     }
 }  // namespace gnef::api

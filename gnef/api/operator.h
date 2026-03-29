@@ -29,7 +29,7 @@ namespace gnef::api {
         /// the parameter is the dirt dir
         virtual turbo::Status initialize(const std::string & dict_dir) = 0;
 
-        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResponse &res) const  = 0;
+        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const  = 0;
     };
 
     class LangDetector {

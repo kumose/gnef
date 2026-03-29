@@ -39,37 +39,37 @@ namespace gnef::api {
         }
 
         turbo::Status cut_all(const std::string &sentence, std::vector<std::string> &words) const {
-            return _jieba.cut(sentence, words);
+            return _jieba.cut_all(sentence, words);
         }
 
         turbo::Status cut_all(const std::string &sentence, std::vector<kmjieba::Word> &words) const {
-            return _jieba.cut(sentence, words);
+            return _jieba.cut_all(sentence, words);
         }
 
         turbo::Status
         cut_for_search(const std::string &sentence, std::vector<std::string> &words, bool hmm = true) const {
-            return _jieba.cut(sentence, words, hmm);
+            return _jieba.cut_for_search(sentence, words, hmm);
         }
 
         turbo::Status cut_for_search(const std::string &sentence, std::vector<kmjieba::Word> &words, bool hmm = true) const {
-            return _jieba.cut(sentence, words, hmm);
+            return _jieba.cut_for_search(sentence, words, hmm);
         }
 
         turbo::Status cut_hmm(const std::string &sentence, std::vector<std::string> &words) const {
-            return _jieba.cut(sentence, words);
+            return _jieba.cut_hmm(sentence, words);
         }
 
         turbo::Status cut_hmm(const std::string &sentence, std::vector<kmjieba::Word> &words) const {
-            return _jieba.cut(sentence, words);
+            return _jieba.cut_hmm(sentence, words);
         }
 
         turbo::Status
         cut_small(const std::string &sentence, std::vector<std::string> &words, size_t max_word_len) const {
-            return _jieba.cut(sentence, words, max_word_len);
+            return _jieba.cut_small(sentence, words, max_word_len);
         }
 
         turbo::Status cut_small(const std::string &sentence, std::vector<kmjieba::Word> &words, size_t max_word_len) const {
-            return _jieba.cut(sentence, words, max_word_len);
+            return _jieba.cut_small(sentence, words, max_word_len);
         }
 
         void tag(const std::string &sentence, std::vector<std::pair<std::string, std::string> > &words) const {
@@ -111,9 +111,9 @@ namespace gnef::api {
         /// model_path -> hmm_model.utf8
         /// idf_path -> idf.utf8
         /// stop_word_path -> stop_words.utf8
-        turbo::Status initialize(const std::string & dict_dir);
+        turbo::Status initialize(const std::string & dict_dir) override;
 
-        turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResponse &res) const override;
+        turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const override;
     private:
         friend class SegmentorInstance;
 

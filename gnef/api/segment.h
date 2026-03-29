@@ -20,5 +20,5 @@
 
 namespace gnef::api {
 
-    turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResponse &res);
+    turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res);
 }  // namespace gnef::api
