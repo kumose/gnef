@@ -13,22 +13,11 @@
 // limitations under the License.
 //
 
-#include <gnef/instance/fasttext.h>
+#include <gnef/operators/fasttext.h>
 #include <turbo/files/filesystem.h>
 
 namespace gnef::api {
 
-    turbo::Status FtzInstance::initialize(const std::string &dict_dir) {
-        if (dict_dir.empty()) {
-            return turbo::invalid_argument_error("dict dir is empty");
-        }
-        std::shared_ptr<FtzHandler> ptr;
-        ptr.reset(new FtzHandler());
-        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
-        set(ptr);
-        set_init();
-        return turbo::OkStatus();
-    }
     turbo::Status FtzHandler::initialize(const std::string &dict_dir) {
         auto path = std::string(dict_dir) + "/lid.176.ftz";
         TURBO_MOVE_OR_RAISE(auto e, turbo::exists(path));

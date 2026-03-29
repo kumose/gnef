@@ -13,13 +13,12 @@
 // limitations under the License.
 //
 
-#include <gnef/api/normalize.h>
-#include <gnef/instance/pinyin.h>
+#include <gnef/api/api.h>
 #include <gnef/api/initializer.h>
 
 int main(int argc, char **argv) {
     kumo::nlp::Config config;
-    auto rs = gnef::api::initialize_gnef(config);
+    auto rs = gnef::api::initialize_gnef(config, true);
     if (!rs.ok()) {
         std::cerr << rs.message() << std::endl;
         return 1;
@@ -35,4 +34,22 @@ int main(int argc, char **argv) {
     setting.mutable_convert()->Add("sp2tw");
     gnef::api::normalize(argv[1], setting, output);
     std::cout << output << std::endl;
+    auto j = gnef::api::SegmentorInstance::instance().static_get<gnef::api::JiebaHandler>();
+    std::vector<kmjieba::Word> result;
+    j->cut(argv[1],  result);
+    std::cout << result << std::endl;
+    result.clear();
+    j->cut_for_search(argv[1],  result);
+    std::cout << result << std::endl;
+    std::vector<std::pair<std::string, std::string>> t;
+    j->tag(argv[1],  t);
+    for (auto i : t) {
+        std::cout << i.first<< ":" << i.second << std::endl;
+    }
+    kumo::nlp::SegmentRequest req;
+    req.set_query(argv[1]);
+    req.mutable_setting()->set_enable_pos(true);
+    kumo::nlp::SegmentResult res;
+    gnef::api::segment(req, res);
+    std::cout << res.ShortDebugString() << std::endl;
 }

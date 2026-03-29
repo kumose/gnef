@@ -16,7 +16,7 @@
 #include <gnef/sql/normalize/pinyin.h>
 #include <gnef/api/config.h>
 #include <gnef/api/dict.h>
-#include <gnef/instance/pinyin.h>
+#include <gnef/instance/pinyin_convert.h>
 #include <turbo/strings/ascii.h>
 
 namespace gnef::sql {

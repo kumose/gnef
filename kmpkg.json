@@ -2,11 +2,11 @@
   "dependencies": [
     "fasttext",
     "goose",
+    "hadar",
     "jieba",
     "merak",
     "taco",
     "xpinyin",
-    "xxd",
-    "hadar"
+    "xxd"
   ]
 }

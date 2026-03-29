@@ -18,19 +18,25 @@
 #include <turbo/utility/status.h>
 
 namespace gnef::api {
-
     class DictManager {
     public:
         static DictManager &instance() {
             static DictManager dict;
             return dict;
         }
-        turbo::Result<std::vector<std::pair<std::string,size_t>>> dump_default_dict(bool reset = false, std::string root = "");
+
+        turbo::Result<std::vector<std::pair<std::string, size_t> > > dump_default_dict(
+            bool reset = false, std::string root = "");
+
         std::string hadar_dict() const;
+
         std::string xpinyin_dict() const;
+
         std::string fasttext_dict() const;
 
-        const std::string& root() const {
+        std::string jieba_dict() const;
+
+        const std::string &root() const {
             return _root;
         }
 
@@ -39,21 +45,40 @@ namespace gnef::api {
         }
 
         std::string default_hadar_dict() const;
+
         std::string default_xpinyin_dict() const;
+
         std::string default_fasttext_dict() const;
 
-        const turbo::Result<std::vector<std::pair<std::string,size_t>>> &result() const {
+        std::string default_jieba_dict() const;
+
+        const turbo::Result<std::vector<std::pair<std::string, size_t> > > &result() const {
             return _result;
         }
 
     private:
-        turbo::Result<std::vector<std::pair<std::string,size_t>>> dump_default_dict_internal(bool reset , std::string root);
+        turbo::Result<std::vector<std::pair<std::string, size_t> > > dump_default_dict_internal(
+            bool reset, std::string root);
+
+        turbo::Status dump_default_jieba_dict(bool reset,
+                                              std::vector<std::pair<std::string, size_t> > &info);
+
+        turbo::Status dump_default_fasttext_dict(bool reset,
+                                                 std::vector<std::pair<std::string, size_t> > &info);
+
+        turbo::Status dump_default_xpinyin_dict(bool reset,
+                                                std::vector<std::pair<std::string, size_t> > &info);
+
+        turbo::Status dump_default_hadar_dict(bool reset,
+                                              std::vector<std::pair<std::string, size_t> > &info);
+
     private:
         turbo::Result<std::vector<std::pair<std::string, size_t> > > _result;
         std::string _root;
         bool _reset{false};
-        std::string  _hadar_dict;
-        std::string  _xpinyin_dict;
-        std::string  _fasttext_dict;
+        std::string _hadar_dict;
+        std::string _xpinyin_dict;
+        std::string _fasttext_dict;
+        std::string _jieba_dict;
     };
 } // namespace gnef::api

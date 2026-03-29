@@ -19,40 +19,27 @@
 
 #include <turbo/utility/status.h>
 #include <gnef/instance/double_instance.h>
+#include <gnef/api/normalize.h>
 
 namespace gnef::api {
-
-    class  PinyinHandler;
-
-    class PinyinInstance : public DoubleInstance<PinyinHandler, PinyinInstance> {
+    class PinyinHandler : public ConverPinyin {
     public:
-        ~PinyinInstance() override = default;
-
-        turbo::Status initialize(const std::string &dict_dir) override;
-
-    private:
-        friend class DoubleInstance<PinyinHandler, PinyinInstance>;
-        PinyinInstance() = default;
-    };
-
-    class PinyinHandler {
-    public:
-
         PinyinHandler() = default;
+
         ~PinyinHandler() = default;
 
 
         xpinyin::PinyinResVector hanzi_to_pinyin(const std::string &hans,
-                                                        xpinyin::ManTone::Style style = xpinyin::ManTone::Style::NORMAL,
-                                                        xpinyin::Error error = xpinyin::Default, bool candidates = true,
-                                                        bool v_to_u = false,
-                                                        bool neutral_tone_with_five = false);
+                                                 xpinyin::ManTone::Style style = xpinyin::ManTone::Style::NORMAL,
+                                                 xpinyin::Error error = xpinyin::Default, bool candidates = true,
+                                                 bool v_to_u = false,
+                                                 bool neutral_tone_with_five = false) override;
 
+
+        turbo::Status initialize(const std::string &dict_dir) override;
 
     private:
         friend class PinyinInstance;
-
-        turbo::Status initialize(const std::string & dict_dir);
 
     private:
         std::string _dict_path;

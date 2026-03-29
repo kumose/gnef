@@ -19,61 +19,47 @@
 #include <gnef/instance/double_instance.h>
 #include <hadar/hadar.h>
 #include <hadar/simple_converter.h>
-
+#include <gnef/api/normalize.h>
 namespace gnef::api {
-
-    class HadarHandler;
-
-    class HadarInstance : public DoubleInstance<HadarHandler, HadarInstance> {
-    public:
-        ~HadarInstance() override = default;
-
-        turbo::Status initialize(const std::string &dict_dir) override;
-
-    private:
-        friend class DoubleInstance<HadarHandler, HadarInstance>;
-        HadarInstance() = default;
-    };
-
-    class HadarHandler {
+    class HadarHandler : public ConverComplex{
     public:
 
        ~HadarHandler() = default;
 
-        turbo::Status initialize(const std::string & dict_path);
+        turbo::Status initialize(const std::string & dict_path) override;
 
-        turbo::Result<std::string> hk2s(const std::string & message);
+        turbo::Result<std::string> hk2s(const std::string & message) override;
 
-        turbo::Result<std::string> hk2t(const std::string & message);
+        turbo::Result<std::string> hk2t(const std::string & message) override;
 
-        turbo::Result<std::string> jp2t(const std::string & message);
+        turbo::Result<std::string> jp2t(const std::string & message) override;
 
-        turbo::Result<std::string> s2hk(const std::string & message);
+        turbo::Result<std::string> s2hk(const std::string & message) override;
 
-        turbo::Result<std::string> s2t(const std::string & message);
+        turbo::Result<std::string> s2t(const std::string & message) override;
 
 
-        turbo::Result<std::string> s2tw(const std::string & message);
+        turbo::Result<std::string> s2tw(const std::string & message) override;
 
-        turbo::Result<std::string> s2twp(const std::string & message);
+        turbo::Result<std::string> s2twp(const std::string & message) override;
 
-        turbo::Result<std::string> t2hk(const std::string & message);
+        turbo::Result<std::string> t2hk(const std::string & message) override;
 
-        turbo::Result<std::string> t2jp(const std::string & message);
+        turbo::Result<std::string> t2jp(const std::string & message) override;
 
-        turbo::Result<std::string> t2s(const std::string & message);
+        turbo::Result<std::string> t2s(const std::string & message) override;
 
-        turbo::Result<std::string> t2tw(const std::string & message);
+        turbo::Result<std::string> t2tw(const std::string & message) override;
 
-        turbo::Result<std::string> tw2s(const std::string & message);
+        turbo::Result<std::string> tw2s(const std::string & message) override;
 
-        turbo::Result<std::string> tw2sp(const std::string & message);
+        turbo::Result<std::string> tw2sp(const std::string & message) override;
 
-        turbo::Result<std::string> tw2t(const std::string & message);
+        turbo::Result<std::string> tw2t(const std::string & message) override;
 
-        turbo::Result<std::string> convert(const std::string & message, const std::string & method);
+        turbo::Result<std::string> convert(const std::string & message, const std::string & method) override;
     private:
-        friend class HadarInstance;
+        friend class ComplexConvertInstance;
         HadarHandler() = default;
     private:
         std::unique_ptr<hadar::SimpleConverter> hk2s_;

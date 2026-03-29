@@ -21,8 +21,13 @@ message SegmentSetting {
   bool enable_pos = 1;
   /// enable phrase
   bool phrase     = 2;
+
+  int32 limited   = 3;
 };
 
+/// this is used by search and offline,
+/// for proto compatible,
+/// Defined here for reusability across different business modules.
 message TermBasicWeight {
   /// one word
   string term = 1;
@@ -36,21 +41,53 @@ message TermBasicWeight {
   double tq_tight = 5;
 };
 
+message OffsetAttr {
+  uint32 offset = 1;
+  int32 unicode_offset = 2;
+  int32 unicode_length = 3;
+  bytes  attr = 4;
+}
+message TermField {
+  string field_name = 1;
+  repeated OffsetAttr offsets = 2;
+  /// field score no weight
+  double score = 3;
+}
+
+/// the TermInfo defined more field to
+/// be compatible in query, reverse index,
+/// so it no need to trans every where by no sense, and fuzz.
+/// the base segmenter will fill the
+/// 1. term
+/// 2. pos
+/// 3. idf
+/// and then, it the other field leave for you, eg, field_name,
+/// int the TermField, it can title, body ,query and so on, you can also
+/// fill the attrs with your own struct with json or other things that, help
+/// you determination.
 message TermInfo {
   /// word or phrase
   string term = 1;
-
   /// noun/verb/adv etc.
+  /// for global, this is difference
+  /// of areas, it is good practice to
+  /// use a switch case fast entry for
+  /// your language, a hashtable may
+  /// be as ok, but not so fast than the switch
   string pos = 2;
   /// position
-  int32 offset = 3;
-  int32 length = 4;
-  double idf = 5;
-  /// for multi language
-  int32 char_offset = 6;
-  int32 char_length = 7;
+  repeated TermField offset = 3;
+  double idf = 4;
+  /// term level score for user
+  double score = 5;
+
+  /// attrs for user
+  bytes  attr = 6;
 };
 
+/// most simple, we always using the main term, but when we consider to searching,
+/// we need more infos about this term, rewrite or something, so we put an additional
+/// for user to implement it own algorithm field to fill them meaning.
 message SegmentTerm {
   TermInfo main_term = 1;
   repeated TermInfo term_infos = 2;
@@ -64,8 +101,4 @@ message SegmentResult {
 message SegmentRequest {
     string query = 1;
     SegmentSetting setting = 2;
-}
-
-message SegmentResponse {
-    SegmentResult result = 1;
 }

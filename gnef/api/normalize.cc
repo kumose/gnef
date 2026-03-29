@@ -17,9 +17,9 @@
 #include <gnef/api/double_string.h>
 #include <turbo/strings/ascii.h>
 #include <merak/protobuf.h>
-#include <gnef/instance/pinyin.h>
-#include <gnef/instance/fasttext.h>
-#include <gnef/instance/hadar.h>
+#include <gnef/instance/pinyin_convert.h>
+#include <gnef/instance/detector.h>
+#include <gnef/instance/complex_convert.h>
 
 namespace gnef::api {
 
@@ -49,7 +49,7 @@ namespace gnef::api {
             *output.mutable_pinyin_short() = std::move(sh);
         }
         if (setting.lang_detect()) {
-            auto ins = FtzInstance::instance().get();
+            auto ins = LangDetectorInstance::instance().get();
             auto r = ins->detect_language(output.query(), 0.6);
             if (!r.empty()) {
                 output.set_lang(r[0].second);
@@ -58,7 +58,7 @@ namespace gnef::api {
         }
 
         if (!setting.convert().empty()) {
-            auto ins = HadarInstance::instance().get();
+            auto ins = ComplexConvertInstance::instance().get();
             auto ret = output.mutable_convert();
             ret->Reserve(setting.convert().size());
             for (auto &ct : setting.convert()) {

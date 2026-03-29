@@ -16,9 +16,10 @@
 #include <gnef/api/initializer.h>
 #include <gnef/api/config.h>
 #include <gnef/api/dict.h>
-#include <gnef/instance/pinyin.h>
-#include <gnef/instance/hadar.h>
-#include <gnef/instance/fasttext.h>
+#include <gnef/instance/pinyin_convert.h>
+#include <gnef/instance/complex_convert.h>
+#include <gnef/instance/detector.h>
+#include <gnef/instance/segmenter.h>
 #include <merak/protobuf.h>
 #include <turbo/files/file_util.h>
 
@@ -26,23 +27,22 @@ namespace gnef::api {
 
     std::atomic<size_t> init_version{0};
 
-    turbo::Status initialize_gnef() {
+    turbo::Status initialize_gnef(bool reset) {
         kumo::nlp::Config config;
-        return initialize_gnef(config);
+        return initialize_gnef(config, reset);
     }
 
     size_t initialize_version() {
         return init_version.load(std::memory_order_relaxed);
     }
 
-    turbo::Status initialize_gnef(const kumo::nlp::Config &config) {
+    turbo::Status initialize_gnef(const kumo::nlp::Config &config, bool reset) {
         /// init config
         TURBO_RETURN_NOT_OK(GnefConfig::instance().load_pb_config(config));
 
         /// dict
-        std::string root;
-        bool reset = false;
-        if (config.has_dict()) {
+        std::string root = GnefConfig::kSystemDictDirectory;
+        if (config.has_dict() && !config.dict().system_dict().empty()) {
             root = config.dict().system_dict();
             reset = config.dict().reset_system_dict();
         }
@@ -51,22 +51,23 @@ namespace gnef::api {
         /// instances
         TURBO_RETURN_NOT_OK(PinyinInstance::instance().initialize(DictManager::instance().xpinyin_dict()));
 
-        TURBO_RETURN_NOT_OK(HadarInstance::instance().initialize(DictManager::instance().hadar_dict()));
+        TURBO_RETURN_NOT_OK(ComplexConvertInstance::instance().initialize(DictManager::instance().hadar_dict()));
 
-        TURBO_RETURN_NOT_OK(FtzInstance::instance().initialize(DictManager::instance().fasttext_dict()));
+        TURBO_RETURN_NOT_OK(LangDetectorInstance::instance().initialize(DictManager::instance().fasttext_dict()));
+        TURBO_RETURN_NOT_OK(SegmentorInstance::instance().initialize(DictManager::instance().jieba_dict()));
         init_version.fetch_add(1, std::memory_order_acquire);
         return turbo::OkStatus();
     }
 
-    turbo::Status initialize_gnef(const std::string &str) {
+    turbo::Status initialize_gnef(const std::string &str, bool reset) {
         kumo::nlp::Config config;
         auto rs = merak::json_to_proto_message(str, &config);
         if (rs.ok()) {
-            return initialize_gnef(config);
+            return initialize_gnef(config, reset);
         }
         config.Clear();
         if (config.ParseFromString(str)) {
-            return initialize_gnef(config);
+            return initialize_gnef(config, reset);
         }
 
         TURBO_RETURN_NOT_OK(turbo::exists(str));
@@ -76,11 +77,11 @@ namespace gnef::api {
         config.Clear();
         rs = merak::json_to_proto_message(context, &config);
         if (rs.ok()) {
-            return initialize_gnef(config);
+            return initialize_gnef(config, reset);
         }
         config.Clear();
         if (config.ParseFromString(context)) {
-            return initialize_gnef(config);
+            return initialize_gnef(config, reset);
         }
         return turbo::invalid_argument_error("not known config type");
     }

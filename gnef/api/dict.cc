@@ -20,6 +20,7 @@
 #include <gnef/api/config.h>
 #include <xpinyin/xxd_gen.h>
 #include <gnef/xxd_gen.h>
+#include <jieba/xxd_gen.h>
 #include  <mutex>
 
 namespace gnef::api {
@@ -44,47 +45,103 @@ namespace gnef::api {
 
     turbo::Result<std::vector<std::pair<std::string, size_t> > > DictManager::dump_default_dict_internal(
         bool reset, std::string root) {
-        if (root.empty()) {
-            _root = GnefConfig::kSystemDictDirectory;
-        } else {
-            _root = root;
-        }
+        _root = root;
         _reset = reset;
 
         if (_reset) {
             TURBO_UNUSED(turbo::remove_all(_root));
         }
 
-        _hadar_dict = _root + "/hadar/";
-        _xpinyin_dict = _root + "/xpinyin/dict/";
-        auto fasttext_dict = _root + "/fasttext";
-        _fasttext_dict = fasttext_dict + "/dict/";
         std::vector<std::pair<std::string, size_t> > info;
+        bool r = true;
         auto rs = turbo::exists(_root);
         if (rs.ok() && rs.value_or_die()) {
-            return info;
+            r = false;
+        } else {
+            r = true;
         }
 
+        TURBO_RETURN_NOT_OK(dump_default_hadar_dict(r, info));
+        TURBO_RETURN_NOT_OK(dump_default_xpinyin_dict(r, info));
+        TURBO_RETURN_NOT_OK(dump_default_fasttext_dict(r, info));
+        TURBO_RETURN_NOT_OK(dump_default_jieba_dict(r, info));
 
-        auto ha_dict = hadar::dict::xxd_gen_files();
-        for (auto it: ha_dict) {
-            TURBO_MOVE_OR_RAISE(auto r, dump_dict(_hadar_dict, it.first, it.second));
-            info.push_back(r);
-        }
-        auto xpinyin_dict = _root + "/xpinyin";
-        auto xpin_dict = xpinyin::dict::xxd_gen_files();
-        for (auto it: xpin_dict) {
-            TURBO_MOVE_OR_RAISE(auto r, dump_dict(xpinyin_dict, it.first, it.second));
-            info.push_back(r);
-        }
-        auto gnef_dict = gnef::dict::xxd_gen_files();
-        for (auto it: gnef_dict) {
-            TURBO_MOVE_OR_RAISE(auto r, dump_dict(fasttext_dict, it.first, it.second));
-            info.push_back(r);
-        }
         return info;
     }
 
+    turbo::Status DictManager::dump_default_fasttext_dict(bool reset, std::vector<std::pair<std::string,size_t>> &info) {
+        auto fasttext_dict_path = turbo::FilePath(_root)/ "fasttext";
+        auto write_root = fasttext_dict_path.string();
+        auto ft_dict = gnef::dict::xxd_gen_files();
+        if (ft_dict.empty()) {
+            return turbo::invalid_argument_error("fasttext default configs is empty, but it need default config");
+        }
+        _fasttext_dict = (turbo::FilePath(fasttext_dict_path)/ft_dict[0].first).parent_path().string();
+        if (!reset) {
+            return turbo::OkStatus();
+        }
+        for (auto it: ft_dict) {
+            TURBO_MOVE_OR_RAISE(auto r, dump_dict(write_root, it.first, it.second));
+            info.push_back(r);
+        }
+        return turbo::OkStatus();
+    }
+
+    turbo::Status DictManager::dump_default_jieba_dict(bool reset, std::vector<std::pair<std::string,size_t>> &info) {
+        auto jieba_dict_path = turbo::FilePath(_root)/ "jieba";
+        auto write_root = jieba_dict_path.string();
+        auto jieba_dicts = jieba::dict::xxd_gen_files();
+        if (jieba_dicts.empty()) {
+            return turbo::invalid_argument_error("jieba default configs is empty, but it need default config");
+        }
+        _jieba_dict = (turbo::FilePath(jieba_dict_path)/jieba_dicts[0].first).parent_path().string();
+        if (!reset) {
+            return turbo::OkStatus();
+        }
+        for (auto it: jieba_dicts) {
+            TURBO_MOVE_OR_RAISE(auto r, dump_dict(write_root, it.first, it.second));
+            info.push_back(r);
+        }
+        return turbo::OkStatus();
+    }
+
+    turbo::Status DictManager::dump_default_xpinyin_dict(bool reset, std::vector<std::pair<std::string,size_t>> &info) {
+        auto xpinyin_dict_path = turbo::FilePath(_root)/ "xpinyin";
+        auto write_root = xpinyin_dict_path.string();
+        auto xpinyin_dicts = xpinyin::dict::xxd_gen_files();
+        if (xpinyin_dicts.empty()) {
+            return turbo::invalid_argument_error("xpinyin default configs is empty, but it need default config");
+        }
+        /// xpinyin need has two level
+        _xpinyin_dict = (turbo::FilePath(xpinyin_dict_path)/xpinyin_dicts[0].first).parent_path().parent_path().string();
+        if (!reset) {
+            return turbo::OkStatus();
+        }
+        for (auto it: xpinyin_dicts) {
+            TURBO_MOVE_OR_RAISE(auto r, dump_dict(write_root, it.first, it.second));
+            info.push_back(r);
+        }
+        return turbo::OkStatus();
+    }
+
+    turbo::Status DictManager::dump_default_hadar_dict(bool reset, std::vector<std::pair<std::string,size_t>> &info) {
+        auto hadar_dict_path = turbo::FilePath(_root)/ "hadar";
+        auto write_root = hadar_dict_path.string();
+        auto hadar_dicts = hadar::dict::xxd_gen_files();
+        if (hadar_dicts.empty()) {
+            return turbo::invalid_argument_error("hadar default configs is empty, but it need default config");
+        }
+        /// xpinyin need has two level
+        _hadar_dict = (turbo::FilePath(hadar_dict_path)/hadar_dicts[0].first).parent_path().string();
+        if (!reset) {
+            return turbo::OkStatus();
+        }
+        for (auto it: hadar_dicts) {
+            TURBO_MOVE_OR_RAISE(auto r, dump_dict(write_root, it.first, it.second));
+            info.push_back(r);
+        }
+        return turbo::OkStatus();
+    }
     std::string DictManager::hadar_dict() const {
         auto c = GnefConfig::instance().get_dict_config();
         if (!c->hadar_dict.empty()) {
@@ -112,6 +169,16 @@ namespace gnef::api {
         return _fasttext_dict;
     }
 
+    std::string DictManager::jieba_dict() const {
+        auto c = GnefConfig::instance().get_dict_config();
+        if (!c->jieba_dict.empty()) {
+            return c->jieba_dict;
+        }
+
+        return _jieba_dict;
+    }
+
+
     std::string DictManager::default_hadar_dict() const {
         return _hadar_dict;
     }
@@ -122,5 +189,8 @@ namespace gnef::api {
 
     std::string DictManager::default_fasttext_dict() const {
         return _fasttext_dict;
+    }
+    std::string DictManager::default_jieba_dict() const {
+        return _jieba_dict;
     }
 } // namespace gnef::api

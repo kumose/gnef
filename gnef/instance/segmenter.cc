@@ -13,24 +13,24 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#include <gnef/instance/segmenter.h>
+#include <turbo/files/filesystem.h>
+#include <gnef/operators/jieba.h>
 
-package kumo.nlp;
+namespace gnef::api {
 
-import "gnef/proto/segment.proto";
+    turbo::Status SegmentorInstance::initialize(const std::string &dict_dir) {
+        if (dict_dir.empty()) {
+            return turbo::invalid_argument_error("jieba initialize with a dict dir is empty");
+        }
 
-message RewriteSetting {
-  bool enable_synonym = 1;
-  bool enable_correct = 2;
-}
+        auto ptr = std::make_shared<JiebaHandler>();
+        TURBO_RETURN_NOT_OK(ptr->initialize_default(dict_dir));
+        set(ptr);
+        set_init();
+        return turbo::OkStatus();
+    }
 
-message RewriteQueryInfo {
-  double belief = 1;
-  int32 level = 2;
-  TermInfo original_term = 3;
-  repeated TermInfo synonyms = 4;
-  repeated TermInfo corrections = 5;
-  bool is_recall = 6;
-  string extra_json = 7;
-  string debug_info = 8;
-}
+
+}  // namespace gnef::api
+

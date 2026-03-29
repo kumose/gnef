@@ -14,7 +14,7 @@
 //
 
 #include <mutex>
-#include <gnef/instance/pinyin.h>
+#include <gnef/operators/xpinyin.h>
 #include <turbo/random/rand_util.h>
 #include <turbo/files/filesystem.h>
 #include <xpinyin/dump_dict.h>
@@ -39,16 +39,5 @@ namespace gnef::api {
        return  _pinyin->hanziToPinyin(hans, style, error, candidates, v_to_u, neutral_tone_with_five);
     }
 
-    turbo::Status PinyinInstance::initialize(const std::string &dict_dir) {
-        if (dict_dir.empty()) {
-            return turbo::invalid_argument_error("dict dir is empty");
-        }
-
-        auto ptr = std::make_shared<PinyinHandler>();
-        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
-        set(ptr);
-        set_init();
-        return turbo::OkStatus();
-    }
 }  // namespace gnef::api
 
