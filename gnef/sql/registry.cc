@@ -18,6 +18,7 @@
 #include <gnef/sql/normalize/registry.h>
 #include <gnef/sql/config/registry.h>
 #include <gnef/sql/dict/registry.h>
+#include <gnef/sql/segment/registry.h>
 #include <gnef/sql/initializer.h>
 
 namespace gnef::sql {
@@ -27,6 +28,7 @@ namespace gnef::sql {
         load_config(loader);
         load_normalize(loader);
         internal::load_initializer(loader);
+        load_segment(loader);
     }
 
 }  // gnef::sql

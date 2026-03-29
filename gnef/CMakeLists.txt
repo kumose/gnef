@@ -122,6 +122,8 @@ goose_cc_extension(
         sql/config/detect.cc
         sql/config/normalize.cc
         sql/dict/registry.cc
+        sql/segment/registry.cc
+        sql/segment/segmenter.cc
         DEPS
         goose_platform
         ABI_TYPE

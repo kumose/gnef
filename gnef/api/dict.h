@@ -60,16 +60,16 @@ namespace gnef::api {
         turbo::Result<std::vector<std::pair<std::string, size_t> > > dump_default_dict_internal(
             bool reset, std::string root);
 
-        turbo::Status dump_default_jieba_dict(std::string_view root,
+        turbo::Status dump_default_jieba_dict(bool reset,
                                               std::vector<std::pair<std::string, size_t> > &info);
 
-        turbo::Status dump_default_fasttext_dict(std::string_view root,
+        turbo::Status dump_default_fasttext_dict(bool reset,
                                                  std::vector<std::pair<std::string, size_t> > &info);
 
-        turbo::Status dump_default_xpinyin_dict(std::string_view root,
+        turbo::Status dump_default_xpinyin_dict(bool reset,
                                                 std::vector<std::pair<std::string, size_t> > &info);
 
-        turbo::Status dump_default_hadar_dict(std::string_view root,
+        turbo::Status dump_default_hadar_dict(bool reset,
                                               std::vector<std::pair<std::string, size_t> > &info);
 
     private:

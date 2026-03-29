@@ -42,7 +42,7 @@ namespace gnef::api {
 
         /// dict
         std::string root = GnefConfig::kSystemDictDirectory;
-        if (config.has_dict()) {
+        if (config.has_dict() && !config.dict().system_dict().empty()) {
             root = config.dict().system_dict();
             reset = config.dict().reset_system_dict();
         }

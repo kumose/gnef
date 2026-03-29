@@ -29,6 +29,9 @@ namespace gnef::sql {
         turbo::Status rs;
         if (n == 0) {
             rs = gnef::api::initialize_gnef();
+            if (!rs.ok()) {
+                throw goose::Exception(goose::ExceptionType::FATAL, turbo::str_format("initialize gnef error:%s", rs.message()));
+            }
 
         } else {
             try {
