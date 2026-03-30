@@ -48,9 +48,9 @@ message NlpResult {
     string pinyin = 4;
     string pinyin_short = 5;
     SegmentResult  terms = 6;
-    repeated NerInfo entities = 7;
+    NerResponse entities = 7;
     EmbeddingResponse embeddings = 8;
     repeated NgramInfo ngram = 9;
     repeated TokenInfo tokens = 10;
-    repeated RewriteQueryInfo   rewrite = 11;
+    RewriteResult   rewrite = 11;
 }

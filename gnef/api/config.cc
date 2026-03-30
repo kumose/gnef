@@ -20,6 +20,79 @@ namespace gnef::api {
 
     const std::string GnefConfig::kSystemDictDirectory = "/tmp/gnefdict";
 
+    static kumo::nlp::NlpSetting full_setting_internal() {
+        kumo::nlp::NlpSetting setting;
+        setting.set_name("kumo");
+        auto m_nor = setting.mutable_normalize_setting();
+        m_nor->set_full_to_half(true);
+        m_nor->set_upper_to_lower(true);
+        m_nor->set_blank_to_one(true);
+        m_nor->set_lang_detect(true);
+        m_nor->set_remove_bad_char(true);
+        m_nor->set_remove_emoji(true);
+        m_nor->set_punctuation_to_space(true);
+        m_nor->set_remove_punctuation(true);
+        m_nor->set_zh_to_pin(true);
+        m_nor->set_zh_to_pin_short(true);
+        m_nor->mutable_convert()->Add("s2hk");
+        auto m_seg = setting.mutable_segment_setting();
+        m_seg->set_enable_pos(true);
+        m_seg->set_phrase(true);
+        m_seg->set_limited(10);
+        auto m_ner = setting.mutable_ner_setting();
+        m_ner->set_pattern("match");
+        m_ner->set_model("bert");
+        m_ner->set_use_cache(true);
+        m_ner->set_strategy("more");
+        auto m_embedding = setting.mutable_embedding_setting();
+        m_embedding->mutable_model()->Add("BGE");
+        setting.mutable_ngram_setting()->set_ngram(4);
+        setting.mutable_rewrite()->set_enable_correct(true);
+        setting.mutable_rewrite()->set_enable_synonym(true);
+        return setting;
+    }
+
+    static kumo::nlp::NlpSetting default_setting_internal() {
+        kumo::nlp::NlpSetting setting;
+        setting.set_name("gnef");
+        auto m_nor = setting.mutable_normalize_setting();
+        m_nor->set_full_to_half(true);
+        //m_nor->set_upper_to_lower(true);
+        m_nor->set_blank_to_one(true);
+        m_nor->set_lang_detect(true);
+        m_nor->set_remove_bad_char(true);
+        m_nor->set_remove_emoji(true);
+        m_nor->set_punctuation_to_space(true);
+        m_nor->set_remove_punctuation(true);
+        //m_nor->set_zh_to_pin(true);
+        //m_nor->set_zh_to_pin_short(true);
+        //m_nor->mutable_convert()->Add("s2hk");
+        auto m_seg = setting.mutable_segment_setting();
+        m_seg->set_enable_pos(true);
+        //m_seg->set_phrase(true);
+        m_seg->set_limited(10);
+       // auto m_ner = setting.mutable_ner_setting();
+       // m_ner->set_pattern("match");
+       // m_ner->set_model("bert");
+      //  m_ner->set_use_cache(true);
+       // m_ner->set_strategy("more");
+       // auto m_embedding = setting.mutable_embedding_setting();
+       // m_embedding->mutable_model()->Add("BGE");
+        //setting.mutable_ngram_setting()->set_ngram(4);
+       // setting.mutable_rewrite()->set_enable_correct(true);
+       // setting.mutable_rewrite()->set_enable_synonym(true);
+        return setting;
+    }
+
+    kumo::nlp::NlpSetting GnefConfig::full_setting() {
+        static const kumo::nlp::NlpSetting ins = full_setting_internal();
+        return ins;
+    }
+
+    kumo::nlp::NlpSetting GnefConfig::default_setting() {
+        static const kumo::nlp::NlpSetting ins = default_setting_internal();
+        return ins;
+    }
     std::shared_ptr<DictConfig> GnefConfig::get_dict_config() const {
         DictConfigTypePtr scope;
         _dict_config.read(&scope);
@@ -57,6 +130,14 @@ namespace gnef::api {
         _detect_config.modify(dict_modify_func<std::shared_ptr<DetectConfig>>, detect);
         auto kv = std::make_shared<turbo::flat_hash_map<std::string, std::string>>();
         _kv_config.modify(dict_modify_func<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>>>, kv);
+        auto d = default_setting_internal();
+        set_nlp_setting(d, 0);
+        set_nlp_setting(d, 1);
+        set_nlp_setting(d, 2);
+        set_nlp_setting(d, 3);
+        set_nlp_setting(d, 4);
+        set_nlp_setting(d, 5);
+        set_nlp_setting(d, 6);
     }
 
     turbo::Status GnefConfig::load_pb_config(const kumo::nlp::Config &config) {
@@ -134,4 +215,6 @@ namespace gnef::api {
         TURBO_RETURN_NOT_OK(merak::json_to_proto_message(json, &config));
         return load_pb_config(config);
     }
+
+
 }  // namespace gnef::api

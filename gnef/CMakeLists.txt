@@ -90,6 +90,7 @@ kmcmake_cc_library(
         instance/detector.cc
         instance/complex_convert.cc
         instance/segmenter.cc
+        instance/embedding.cc
         operators/jieba.cc
         operators/fasttext.cc
         operators/xpinyin.cc

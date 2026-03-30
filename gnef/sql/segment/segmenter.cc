@@ -25,8 +25,7 @@ namespace gnef::sql {
         auto func_one = [&](goose::string_t input) {
             kumo::nlp::SegmentRequest req;
             kumo::nlp::SegmentResult res;
-            req.set_query(std::move(input.GetString()));
-            std::string_view text(input.GetData(), input.GetSize());
+            req.set_query(input.GetString());
             auto rs = gnef::api::segment(req, res);
             if (!rs.ok()) {
                 return goose::StringVector::AddString(
@@ -45,9 +44,8 @@ namespace gnef::sql {
         auto func_two = [&](goose::string_t input, bool pos) {
             kumo::nlp::SegmentRequest req;
             kumo::nlp::SegmentResult res;
-            req.set_query(std::move(input.GetString()));
+            req.set_query(input.GetString());
             req.mutable_setting()->set_enable_pos(pos);
-            std::string_view text(input.GetData(), input.GetSize());
             auto rs = gnef::api::segment(req, res);
             if (!rs.ok()) {
                 return goose::StringVector::AddString(

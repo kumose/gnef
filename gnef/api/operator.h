@@ -18,18 +18,27 @@
 #include <turbo/utility/status.h>
 #include <gnef/proto/search.pb.h>
 #include  <xpinyin/pinyin.h>
+#include <turbo/container/span.h>
 
 namespace gnef::api {
 
+    /// we define the interface of nlp interface for
+    /// operations. default, we implement the basics,
+    /// but business more relevance module like intent
+    /// rewrite, user need to implement it you self.
+    /// the operator can be implement local call or remote call,
+    /// but caution that, when you using remote call, it means that,
+    /// care about the remote service stable. otherwise, if remote is
+    /// un-access, guard that you have a local call for a base.
     class Segmenter {
     public:
-        virtual ~Segmenter()  = default;
+        virtual ~Segmenter() = default;
 
         /////////////////////////////////////////////////////////////
         /// the parameter is the dirt dir
-        virtual turbo::Status initialize(const std::string & dict_dir) = 0;
+        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
 
-        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const  = 0;
+        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const = 0;
     };
 
     class LangDetector {
@@ -97,4 +106,56 @@ namespace gnef::api {
         virtual turbo::Result<std::string> convert(const std::string &message, const std::string &method) = 0;
     };
 
-}  // namespace gnef::api
+    class Embedding {
+    public:
+        virtual ~Embedding() = default;
+
+        virtual std::string_view name() const = 0;
+
+        virtual std::string_view arch() const = 0;
+
+        virtual int dimensions() const = 0;
+
+        virtual  std::string_view description() const = 0;
+
+        virtual turbo::Status inference(std::string_view sentence, std::vector<float> &result) const = 0;
+
+        virtual turbo::Status inference_batch(turbo::span<std::string_view> &sentence, std::vector<std::vector<float>> &result) const = 0;
+
+        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
+    };
+
+    class NerOps {
+    public:
+        virtual ~NerOps() = default;
+
+        virtual turbo::Status ner(const kumo::nlp::NerRequest &req, kumo::nlp::NerResponse &res) const = 0;
+
+        /// for that, no need to build a NerRequest pb object to improve performance
+        virtual turbo::Status ner(const std::string &query, const kumo::nlp::NerSetting &setting, kumo::nlp::NerResponse &res) const = 0;
+        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
+    };
+
+    class RewriterOps {
+    public:
+        virtual ~RewriterOps() = default;
+
+        /// the rewriter run phrase need all the informations before it run, so feed it, NlpResult,
+        /// after running, move the result res to reqs rewrite field,but operator should not touch the
+        /// req field to modify.
+        virtual turbo::Status rewriter(const kumo::nlp::NlpResult &req, kumo::nlp::RewriteResult &res) const = 0;
+
+        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
+    };
+
+    /*
+    class IntentOps {
+    public:
+        virtual ~IntentOps() = default;
+
+        virtual turbo::Status intent(const kumo::nlp::NerRequest &req, kumo::nlp::NerResponse &res) const = 0;
+
+        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
+    };
+    */
+} // namespace gnef::api
