@@ -78,21 +78,20 @@ namespace gnef::api {
 
     }
 
-    turbo::Status JiebaHandler::segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const {
+    turbo::Status JiebaHandler::segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res) const {
         static constexpr int kTermLimited = 10;
-        auto &q = req.query();
-        auto enable_pos = req.setting().enable_pos();
-        int top_n = req.setting().limited();
+        auto enable_pos = setting.enable_pos();
+        int top_n = setting.limited();
         if (top_n <= 0) {
             top_n = kTermLimited;
         }
         std::vector<kmjieba::ExtractorWord> words;
         auto *mutable_list = res.mutable_terms();
-        TURBO_RETURN_NOT_OK(_jieba.extractor.extract(q, words, top_n));
+        /// TODO make using of std::string_view avaiable
+        TURBO_RETURN_NOT_OK(_jieba.extractor.extract(std::string(query), words, top_n));
 
         /// avoid if branch in for loop
         mutable_list->Reserve(words.size());
-        std::cerr << words.size() << " words " <<words<< std::endl;
         if (enable_pos) {
             for (auto &w : words) {
                 kumo::nlp::SegmentTerm term;

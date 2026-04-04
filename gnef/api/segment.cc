@@ -18,8 +18,8 @@
 
 namespace gnef::api {
 
-    turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) {
+    turbo::Status segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res) {
         auto ins = SegmentorInstance::instance().get();
-        return ins->segment(req, res);
+        return ins->segment(query,setting,  res);
     }
 }  // namespace gnef::api

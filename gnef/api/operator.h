@@ -16,7 +16,7 @@
 #pragma once
 
 #include <turbo/utility/status.h>
-#include <gnef/proto/search.pb.h>
+#include <nlpproto/search.pb.h>
 #include  <xpinyin/pinyin.h>
 #include <turbo/container/span.h>
 
@@ -38,7 +38,11 @@ namespace gnef::api {
         /// the parameter is the dirt dir
         virtual turbo::Status initialize(const std::string &dict_dir) = 0;
 
-        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const = 0;
+        virtual turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const {
+            return segment(req.query(), req.setting(), res);
+        }
+
+        virtual turbo::Status segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res) const = 0;
     };
 
     class LangDetector {
@@ -106,30 +110,9 @@ namespace gnef::api {
         virtual turbo::Result<std::string> convert(const std::string &message, const std::string &method) = 0;
     };
 
-    class Embedding {
-    public:
-        virtual ~Embedding() = default;
-
-        virtual std::string_view name() const = 0;
-
-        virtual std::string_view arch() const = 0;
-
-        virtual int dimensions() const = 0;
-
-        virtual  std::string_view description() const = 0;
-
-        virtual turbo::Status inference(std::string_view sentence, std::vector<float> &result) const = 0;
-
-        virtual turbo::Status inference_batch(turbo::span<std::string_view> &sentence, std::vector<std::vector<float>> &result) const = 0;
-
-        virtual turbo::Status initialize(const std::string &dict_dir) = 0;
-    };
-
     class NerOps {
     public:
         virtual ~NerOps() = default;
-
-        virtual turbo::Status ner(const kumo::nlp::NerRequest &req, kumo::nlp::NerResponse &res) const = 0;
 
         /// for that, no need to build a NerRequest pb object to improve performance
         virtual turbo::Status ner(const std::string &query, const kumo::nlp::NerSetting &setting, kumo::nlp::NerResponse &res) const = 0;

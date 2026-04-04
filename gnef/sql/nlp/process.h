@@ -15,20 +15,10 @@
 
 #pragma once
 
-#include <gnef/instance/double_instance.h>
-#include <gnef/api/operator.h>
+#include <goose/goose.h>
 
-namespace gnef::api {
+namespace gnef::sql {
 
-    class EmbeddingInstance : public DoubleInstance<Embedding, EmbeddingInstance> {
-    public:
-        ~EmbeddingInstance() override = default;
+    void nlp_process(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
 
-        turbo::Status initialize(const std::string &dict_dir) override;
-
-    private:
-        friend class DoubleInstance<Embedding, EmbeddingInstance>;
-        EmbeddingInstance() = default;
-    };
-}  // gnef::api
-
+}  // namespace gnef::sql

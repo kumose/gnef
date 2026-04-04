@@ -13,12 +13,15 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#include <gnef/operators/null_ner.h>
 
-package kumo.nlp;
+namespace gnef::api {
+    turbo::Status NullNerOps::ner(const std::string &query, const kumo::nlp::NerSetting &setting,
+                      kumo::nlp::NerResponse &res) const {
+        return turbo::OkStatus();
+    }
 
-message TokenInfo {
-  string token = 1;
-  int32 offset = 2;
-  int32 length = 3;
-}
+    turbo::Status NullNerOps::initialize(const std::string &dict_dir) {
+        return turbo::OkStatus();
+    }
+} // namespace gnef::api

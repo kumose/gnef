@@ -19,6 +19,8 @@
 #include <gnef/api/operator.h>
 
 namespace gnef::api {
-
-    turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res);
+    turbo::Status segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res);
+    inline turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) {
+        return segment(req.query(), req.setting(), res);
+    }
 }  // namespace gnef::api

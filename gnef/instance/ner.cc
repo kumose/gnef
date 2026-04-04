@@ -13,26 +13,17 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#include <gnef/instance/ner.h>
+#include <gnef/operators/null_ner.h>
 
-package kumo.nlp;
+namespace gnef::api {
 
-message EmbeddingSetting {
-    repeated string model = 1;
-}
-
-message EmbeddingRequest {
-  string query = 1;
-  EmbeddingSetting setting = 2;
-}
-
-message EmbeddingItem {
-  string label = 1;
-  /// Using bytes might improve performance and optimize storage.
-  /// but that means for users, It introduces more ambiguity regarding endianness, dimensions, and data types.
-  repeated float feature = 2;
-}
-
-message EmbeddingResponse {
-  repeated EmbeddingItem features = 2;
-}
+    turbo::Status NerInstance::initialize(const std::string &dict_dir) {
+        std::shared_ptr<NullNerOps> ptr;
+        ptr.reset(new NullNerOps());
+        TURBO_RETURN_NOT_OK(ptr->initialize(dict_dir));
+        set(ptr);
+        set_init();
+        return turbo::OkStatus();
+    }
+}  // namespace gnef::api

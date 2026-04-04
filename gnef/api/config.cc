@@ -22,6 +22,11 @@ namespace gnef::api {
 
     static kumo::nlp::NlpSetting full_setting_internal() {
         kumo::nlp::NlpSetting setting;
+        setting.set_enable_intent(true);
+        setting.set_enable_normalize(true);
+        setting.set_enable_segment(true);
+        setting.set_enable_rewrite(true);
+        setting.set_enable_ner(true);
         setting.set_name("kumo");
         auto m_nor = setting.mutable_normalize_setting();
         m_nor->set_full_to_half(true);
@@ -35,6 +40,7 @@ namespace gnef::api {
         m_nor->set_zh_to_pin(true);
         m_nor->set_zh_to_pin_short(true);
         m_nor->mutable_convert()->Add("s2hk");
+        m_nor->mutable_convert()->Add("s2t");
         auto m_seg = setting.mutable_segment_setting();
         m_seg->set_enable_pos(true);
         m_seg->set_phrase(true);
@@ -44,8 +50,6 @@ namespace gnef::api {
         m_ner->set_model("bert");
         m_ner->set_use_cache(true);
         m_ner->set_strategy("more");
-        auto m_embedding = setting.mutable_embedding_setting();
-        m_embedding->mutable_model()->Add("BGE");
         setting.mutable_ngram_setting()->set_ngram(4);
         setting.mutable_rewrite()->set_enable_correct(true);
         setting.mutable_rewrite()->set_enable_synonym(true);
@@ -54,6 +58,11 @@ namespace gnef::api {
 
     static kumo::nlp::NlpSetting default_setting_internal() {
         kumo::nlp::NlpSetting setting;
+        //setting.set_enable_intent(false);
+        setting.set_enable_normalize(true);
+        setting.set_enable_segment(true);
+        //setting.set_enable_rewrite(false);
+        //setting.set_enable_ner(false);
         setting.set_name("gnef");
         auto m_nor = setting.mutable_normalize_setting();
         m_nor->set_full_to_half(true);
@@ -84,12 +93,12 @@ namespace gnef::api {
         return setting;
     }
 
-    kumo::nlp::NlpSetting GnefConfig::full_setting() {
+    const kumo::nlp::NlpSetting &GnefConfig::full_setting() {
         static const kumo::nlp::NlpSetting ins = full_setting_internal();
         return ins;
     }
 
-    kumo::nlp::NlpSetting GnefConfig::default_setting() {
+    const kumo::nlp::NlpSetting &GnefConfig::default_setting() {
         static const kumo::nlp::NlpSetting ins = default_setting_internal();
         return ins;
     }

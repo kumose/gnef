@@ -46,59 +46,26 @@ kmcmake_cc_library(
         PUBLIC
 )
 
-
-set(PROTO_FILES
-        proto/embedding.proto
-        proto/intent.proto
-        proto/ner.proto
-        proto/ngram.proto
-        proto/normalize.proto
-        proto/rewrite.proto
-        proto/search.proto
-        proto/segment.proto
-        proto/semantic.proto
-        proto/config.proto
-)
-
-kmcmake_cc_proto(
-        NAME proto_obj
-        PROTOS
-        ${PROTO_FILES}
-        OUTDIR
-        ${PROJECT_SOURCE_DIR}
-)
-
-kmcmake_cc_object(
-        NAMESPACE gnef
-        NAME proto_obj
-        SOURCES
-        ${proto_obj_SRCS}
-        CXXOPTS
-        ${KMCMAKE_CXX_OPTIONS}
-)
-
 kmcmake_cc_library(
         NAMESPACE ${PROJECT_NAME}
-        NAME proto
+        NAME gnef_api
         SOURCES
         api/config.cc
         api/normalize.cc
         api/dict.cc
         api/initializer.cc
         api/segment.cc
+        api/nlp.cc
         instance/pinyin_convert.cc
         instance/detector.cc
         instance/complex_convert.cc
         instance/segmenter.cc
-        instance/embedding.cc
+        instance/ner.cc
         operators/jieba.cc
         operators/fasttext.cc
         operators/xpinyin.cc
         operators/hadar.cc
-        OBJECTS
-        proto_obj
-        DEPS
-        proto_obj
+        operators/null_ner.cc
         CXXOPTS
         ${KMCMAKE_CXX_OPTIONS}
         PLINKS
@@ -122,7 +89,10 @@ goose_cc_extension(
         sql/config/registry.cc
         sql/config/detect.cc
         sql/config/normalize.cc
+        sql/config/nlp.cc
         sql/dict/registry.cc
+        sql/nlp/registry.cc
+        sql/nlp/process.cc
         sql/segment/registry.cc
         sql/segment/segmenter.cc
         DEPS
@@ -132,7 +102,7 @@ goose_cc_extension(
         CXXOPTS
         ${KMCMAKE_CXX_OPTIONS}
         PLINKS
-        gnef::proto_static
+        gnef::gnef_api_static
         ${KMCMAKE_DEPS_LINK}
         PUBLIC
 )
@@ -180,7 +150,7 @@ kmcmake_cc_binary(
         ${KMCMAKE_CXX_OPTIONS}
         LINKS
         gnef::gnef_dict_static
-        gnef::proto_static
+        gnef::gnef_api_static
         ${KMCMAKE_DEPS_LINK}
         LINKOPTS
         ${KMCMAKE_STATIC_BIN_OPTION}

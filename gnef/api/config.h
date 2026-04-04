@@ -17,9 +17,9 @@
 
 #include <turbo/container/flat_hash_map.h>
 #include <taco/doubly_buffered_data.h>
-#include <gnef/proto/config.pb.h>
-#include <gnef/proto/search.pb.h>
-#include  <turbo/utility/status.h>
+#include <nlpproto/config.pb.h>
+#include <nlpproto/search.pb.h>
+#include <turbo/utility/status.h>
 #include <turbo/log/logging.h>
 
 namespace gnef::api {
@@ -37,6 +37,10 @@ namespace gnef::api {
         std::string fasttext_dict;
         std::string jieba_dict;
         std::string hadar_dict;
+        std::string ner_dict;
+        std::string intent_dict;
+        std::string rewrite_dict;
+        std::string ngram_dict;
     };
 
 
@@ -98,9 +102,9 @@ namespace gnef::api {
             return true;
         }
 
-        static bool modify_nlp_func(std::shared_ptr<kumo::nlp::NlpSetting> &d, const kumo::nlp::NlpSetting &new_data) {
-            /// use double data ptr, avoid front end and backend race.
-            auto ptr = std::make_shared<kumo::nlp::NlpSetting>(new_data);
+        static bool modify_nlp_func(std::shared_ptr<kumo::nlp::NlpSetting> &d, const kumo::nlp::NlpSetting &setting) {
+            auto ptr =std::make_shared<kumo::nlp::NlpSetting>();
+            *ptr = setting;
             d = ptr;
             return true;
         }
@@ -178,7 +182,8 @@ namespace gnef::api {
         static bool modify_nlp_map_func(turbo::flat_hash_map<std::string, std::shared_ptr<kumo::nlp::NlpSetting> > &d,
                                 std::string_view name, const kumo::nlp::NlpSetting &new_data) {
             /// use double data ptr, avoid front end and backend race.
-            auto ptr = std::make_shared<kumo::nlp::NlpSetting>(new_data);
+            auto ptr = std::make_shared<kumo::nlp::NlpSetting>();
+            *ptr = new_data;
             d[name] = ptr;
             return true;
         }
@@ -197,9 +202,19 @@ namespace gnef::api {
             return nullptr;
         }
 
-        static kumo::nlp::NlpSetting full_setting();
+        turbo::flat_hash_map<std::string, std::shared_ptr<kumo::nlp::NlpSetting>> get_all_nlp_user_setting() {
+            NlpSettingTypePtr scoped;
+            _nlp_config.read(&scoped);
+            return *scoped;
+        }
 
-        static kumo::nlp::NlpSetting default_setting();
+        size_t nlp_setting_slots() const {
+            return 7;
+        }
+
+        static const kumo::nlp::NlpSetting &full_setting();
+
+        static const kumo::nlp::NlpSetting &default_setting();
 
     private:
         GnefConfig();

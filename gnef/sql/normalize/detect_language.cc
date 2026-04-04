@@ -123,7 +123,7 @@ namespace gnef::sql {
                 TURBO_UNREACHABLE();
         }
 
-        return ret;
+        return std::move(ret);
     }
 
     goose::unique_ptr<goose::GlobalTableFunctionState> detect_lang_init(
@@ -131,7 +131,7 @@ namespace gnef::sql {
         auto result = goose::make_uniq<DetectTableState>();
         auto &qdata = input.bind_data->Cast<DetectTableData>();
         result->entries  = process_detect_table(qdata.query, qdata.config.threshold);
-        return result;
+        return std::move(result);
     }
 
     void detect_lang_function(goose::ClientContext &context, goose::TableFunctionInput &data_p,
