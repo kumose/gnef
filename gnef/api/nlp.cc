@@ -32,7 +32,7 @@ namespace gnef::api {
             kumo::nlp::SegmentResult response;
             auto rs = segment(query,setting.segment_setting(),response);
             if (!rs.ok()) {
-                result.set_cost_ms(cost.u_elapsed());
+                result.set_cost_us(cost.u_elapsed());
                 return rs;
             }
             *result.mutable_terms() = std::move(response);
@@ -49,7 +49,7 @@ namespace gnef::api {
         }
         if (setting.enable_rewrite()) {}
         */
-        result.set_cost_ms(cost.u_elapsed());
+        result.set_cost_us(cost.u_elapsed());
         return turbo::OkStatus();
     }
 }  // namespace gnef::api

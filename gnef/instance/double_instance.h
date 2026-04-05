@@ -36,7 +36,7 @@ namespace gnef::api {
         std::shared_ptr<T> get() {
             if (TURBO_UNLIKELY(!_inited)) {
                 if (_inited == 0) {
-                    throw std::runtime_error("Must Initialize Gnef first!");
+                    throw std::runtime_error("Must Initialize Gnef first! by call: pragma initialize_gnef_default; or pragma initialize_gnef('your dict config') ");
                 }
             }
 
