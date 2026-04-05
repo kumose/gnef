@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include <goose/goose.h>
 
-message TokenInfo {
-  string token = 1;
-  int32 offset = 2;
-  int32 length = 3;
-}
+namespace gnef::sql {
+
+    void nlp_process(goose::DataChunk &args, goose::ExpressionState &state, goose::Vector &result);
+
+}  // namespace gnef::sql

@@ -44,6 +44,7 @@ find_package(jieba REQUIRED)
 find_package(xpinyin REQUIRED)
 find_package(hadar REQUIRED)
 find_package(Marisa REQUIRED)
+find_package(nlpproto REQUIRED)
 if (Protobuf_VERSION GREATER 4.21)
     # required by absl
     find_package(absl REQUIRED CONFIG)
@@ -93,6 +94,7 @@ endif ()
 set(KMCMAKE_DEPS_LINK
         #${TURBO_LIB}
         merak::merak_static
+        nlpproto::nlpproto_static
         protobuf::libprotobuf
         ${protobuf_ABSL_USED_TARGETS}
         protobuf::libprotoc

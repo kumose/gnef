@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <gnef/proto/config.pb.h>
+#include <nlpproto/config.pb.h>
 
 #include <turbo/utility/status.h>
 

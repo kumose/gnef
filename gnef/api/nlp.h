@@ -13,7 +13,16 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-package kumo.nlp;
+#include <nlpproto/search.pb.h>
+#include <turbo/utility/status.h>
 
+namespace gnef::api {
+
+    turbo::Status nlp_process(std::string_view query, const kumo::nlp::NlpSetting& setting, kumo::nlp::NlpResult& result);
+
+    inline turbo::Status nlp_process(const kumo::nlp::NlpRequest& request, kumo::nlp::NlpResult& result) {
+        return  nlp_process(request.query(), request.setting(), result);
+    }
+}  // namespace gnef::api

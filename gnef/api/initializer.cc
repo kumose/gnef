@@ -20,6 +20,7 @@
 #include <gnef/instance/complex_convert.h>
 #include <gnef/instance/detector.h>
 #include <gnef/instance/segmenter.h>
+#include <gnef/instance/ner.h>
 #include <merak/protobuf.h>
 #include <turbo/files/file_util.h>
 
@@ -55,6 +56,7 @@ namespace gnef::api {
 
         TURBO_RETURN_NOT_OK(LangDetectorInstance::instance().initialize(DictManager::instance().fasttext_dict()));
         TURBO_RETURN_NOT_OK(SegmentorInstance::instance().initialize(DictManager::instance().jieba_dict()));
+        TURBO_RETURN_NOT_OK(NerInstance::instance().initialize(DictManager::instance().ner_dict()));
         init_version.fetch_add(1, std::memory_order_acquire);
         return turbo::OkStatus();
     }

@@ -13,14 +13,24 @@
 // limitations under the License.
 //
 
-syntax = "proto3";
+#pragma once
 
-message NgramSetting {
-  int32 ngram = 1;
-}
-message NgramInfo {
-  string term = 1;
-  int32  n = 2;
-  float weight = 3;
-}
+#include <turbo/utility/status.h>
+#include <gnef/api/operator.h>
 
+namespace gnef::api {
+    class NullNerOps : public NerOps {
+    public:
+        ~NullNerOps() override = default;
+
+        /// for that, no need to build a NerRequest pb object to improve performance
+        turbo::Status ner(const std::string &query, const kumo::nlp::NerSetting &setting,
+                          kumo::nlp::NerResponse &res) const override;
+
+        turbo::Status initialize(const std::string &dict_dir) override;
+
+    private:
+        friend class NerInstance;
+        NullNerOps() = default;
+    };
+} // namespace gnef::api

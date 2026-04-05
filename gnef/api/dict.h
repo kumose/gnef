@@ -36,6 +36,11 @@ namespace gnef::api {
 
         std::string jieba_dict() const;
 
+        std::string ngram_dict() const;
+        std::string intent_dict() const;
+        std::string rewrite_dict() const;
+        std::string ner_dict() const;
+
         const std::string &root() const {
             return _root;
         }
@@ -51,6 +56,11 @@ namespace gnef::api {
         std::string default_fasttext_dict() const;
 
         std::string default_jieba_dict() const;
+
+        std::string default_ner_dict() const;
+        std::string default_intent_dict() const;
+        std::string default_rewrite_dict() const;
+        std::string default_ngram_dict() const;
 
         const turbo::Result<std::vector<std::pair<std::string, size_t> > > &result() const {
             return _result;
@@ -80,5 +90,9 @@ namespace gnef::api {
         std::string _xpinyin_dict;
         std::string _fasttext_dict;
         std::string _jieba_dict;
+        std::string _ner_dict;
+        std::string _intent_dict;
+        std::string _rewrite_dict;
+        std::string _ngram_dict;
     };
 } // namespace gnef::api

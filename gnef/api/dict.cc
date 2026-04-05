@@ -178,6 +178,35 @@ namespace gnef::api {
         return _jieba_dict;
     }
 
+    std::string DictManager::ngram_dict() const {
+        auto c = GnefConfig::instance().get_dict_config();
+        if (!c->ngram_dict.empty()) {
+            return c->ngram_dict;
+        }
+        return _ngram_dict;
+    }
+    std::string DictManager::intent_dict() const {
+        auto c = GnefConfig::instance().get_dict_config();
+        if (!c->intent_dict.empty()) {
+            return c->intent_dict;
+        }
+        return _intent_dict;
+    }
+    std::string DictManager::rewrite_dict() const {
+        auto c = GnefConfig::instance().get_dict_config();
+        if (!c->rewrite_dict.empty()) {
+            return c->rewrite_dict;
+        }
+        return _rewrite_dict;
+    }
+    std::string DictManager::ner_dict() const {
+        auto c = GnefConfig::instance().get_dict_config();
+        if (!c->ner_dict.empty()) {
+            return c->ner_dict;
+        }
+        return _ner_dict;
+    }
+
 
     std::string DictManager::default_hadar_dict() const {
         return _hadar_dict;
@@ -192,5 +221,18 @@ namespace gnef::api {
     }
     std::string DictManager::default_jieba_dict() const {
         return _jieba_dict;
+    }
+
+    std::string DictManager::default_ner_dict() const {
+        return _ner_dict;
+    }
+    std::string DictManager::default_intent_dict() const {
+        return _intent_dict;
+    }
+    std::string DictManager::default_rewrite_dict() const {
+        return _rewrite_dict;
+    }
+    std::string DictManager::default_ngram_dict() const {
+        return _ngram_dict;
     }
 } // namespace gnef::api

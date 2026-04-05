@@ -14,20 +14,24 @@
 //
 
 
-#include <gnef/sql/segment/registry.h>
-#include <gnef/sql/segment/segmenter.h>
+#include <gnef/sql/nlp/registry.h>
+#include <gnef/sql/nlp/process.h>
 
 namespace gnef::sql {
 
-    void load_segment(goose::ExtensionLoader &loader) {
-        goose::ScalarFunctionSet detect_lang("segment");
-        /// one select detect_lang('I am lothar');
+    void load_nlp(goose::ExtensionLoader &loader) {
+        goose::ScalarFunctionSet detect_lang("nlp_process");
+        /// one select nlp_process('I am lothar');
         detect_lang.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR}, goose::LogicalType::VARCHAR,
-                                                      gnef::sql::segment));
-        /// one select detect_lang('I am lothar', true);
-        detect_lang.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR, goose::LogicalType::BOOLEAN},
+                                                      gnef::sql::nlp_process));
+        /// one select nlp_process('I am lothar', 1);
+        detect_lang.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR, goose::LogicalType::INTEGER},
                                                       goose::LogicalType::VARCHAR,
-                                                      gnef::sql::segment));
+                                                      gnef::sql::nlp_process));
+        /// one select nlp_process('I am lothar', 'myconfig');
+        detect_lang.AddFunction(goose::ScalarFunction({goose::LogicalType::VARCHAR, goose::LogicalType::VARCHAR},
+                                                      goose::LogicalType::VARCHAR,
+                                                      gnef::sql::nlp_process));
 
         loader.RegisterFunction(detect_lang);
     }

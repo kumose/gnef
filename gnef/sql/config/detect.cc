@@ -14,8 +14,7 @@
 //
 
 #include <gnef/sql/config/detect.h>
-
-#include "gnef/api/config.h"
+#include <gnef/api/config.h>
 
 namespace gnef::sql {
     void pragma_detect_config(goose::ClientContext &context, const goose::FunctionParameters &parameters) {

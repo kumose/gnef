@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <gnef/proto/normalize.pb.h>
+#include <nlpproto/normalize.pb.h>
 #include <turbo/utility/status.h>
 #include <gnef/api/operator.h>
 

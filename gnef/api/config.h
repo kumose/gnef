@@ -17,11 +17,12 @@
 
 #include <turbo/container/flat_hash_map.h>
 #include <taco/doubly_buffered_data.h>
-#include <gnef/proto/config.pb.h>
-#include  <turbo/utility/status.h>
+#include <nlpproto/config.pb.h>
+#include <nlpproto/search.pb.h>
+#include <turbo/utility/status.h>
+#include <turbo/log/logging.h>
 
 namespace gnef::api {
-
     struct DetectConfig {
         std::string unknown{"unknown"};
         float threshold{0.6};
@@ -36,6 +37,10 @@ namespace gnef::api {
         std::string fasttext_dict;
         std::string jieba_dict;
         std::string hadar_dict;
+        std::string ner_dict;
+        std::string intent_dict;
+        std::string rewrite_dict;
+        std::string ngram_dict;
     };
 
 
@@ -43,6 +48,7 @@ namespace gnef::api {
     public:
         /// "/tmp/gnefdict"
         static const std::string kSystemDictDirectory;
+
     private:
         using DictConfigType = taco::DoublyBufferedData<std::shared_ptr<DictConfig> >;
         using DictConfigTypePtr = taco::DoublyBufferedData<std::shared_ptr<DictConfig> >::ScopedPtr;
@@ -50,13 +56,24 @@ namespace gnef::api {
         using DetectConfigType = taco::DoublyBufferedData<std::shared_ptr<DetectConfig> >;
         using DetectConfigTypePtr = taco::DoublyBufferedData<std::shared_ptr<DetectConfig> >::ScopedPtr;
 
-        using KVConfigType = taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> >;
-        using KVConfigTypePtr = taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> >::ScopedPtr;
+        using KVConfigType = taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string, std::string> > >
+        ;
+        using KVConfigTypePtr = taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string,
+            std::string> > >::ScopedPtr;
+
+        using NlpSettingType = taco::DoublyBufferedData<turbo::flat_hash_map<std::string, std::shared_ptr<kumo::nlp::NlpSetting>> >;
+        using NlpSettingTypePtr = taco::DoublyBufferedData<turbo::flat_hash_map<std::string,
+            std::shared_ptr<kumo::nlp::NlpSetting>> >::ScopedPtr;
+
+        using NlpSlotSettingType = taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> >;
+        using NlpSlotSettingTypePtr = taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> >::ScopedPtr;
 
     public:
         ~GnefConfig() = default;
-        GnefConfig(const GnefConfig&) = delete;
-        void operator=(const GnefConfig&) = delete;
+
+        GnefConfig(const GnefConfig &) = delete;
+
+        void operator=(const GnefConfig &) = delete;
 
         static GnefConfig &instance() {
             static GnefConfig ins;
@@ -71,25 +88,152 @@ namespace gnef::api {
 
         void set_detect_config(std::shared_ptr<DetectConfig> data);
 
-        std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> get_kv_config() const;
+        std::shared_ptr<turbo::flat_hash_map<std::string, std::string> > get_kv_config() const;
 
-        void set_kv_config(std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> kv);
+        void set_kv_config(std::shared_ptr<turbo::flat_hash_map<std::string, std::string> > kv);
 
         turbo::Status load_pb_config(const kumo::nlp::Config &config);
 
         turbo::Status load_json_config(const std::string &json);
 
-        template <typename T>
+        template<typename T>
         static bool dict_modify_func(T &d, T new_data) {
             d = new_data;
             return true;
         }
 
+        static bool modify_nlp_func(std::shared_ptr<kumo::nlp::NlpSetting> &d, const kumo::nlp::NlpSetting &setting) {
+            auto ptr =std::make_shared<kumo::nlp::NlpSetting>();
+            *ptr = setting;
+            d = ptr;
+            return true;
+        }
+
+        /// slot = 0 means default
+        void set_nlp_setting(const kumo::nlp::NlpSetting &setting, int slot = 0) {
+            switch (slot) {
+                case 0:
+                    _nlp_config_default.modify(modify_nlp_func, setting);
+                    break;
+                case 1:
+                    _nlp_config_1.modify(modify_nlp_func, setting);
+                    break;
+                case 2:
+                    _nlp_config_2.modify(modify_nlp_func, setting);
+                    break;
+                case 3:
+                    _nlp_config_3.modify(modify_nlp_func, setting);
+                    break;
+                case 4:
+                    _nlp_config_4.modify(modify_nlp_func, setting);
+                    break;
+                case 5:
+                    _nlp_config_5.modify(modify_nlp_func, setting);
+                    break;
+                case 6:
+                    _nlp_config_6.modify(modify_nlp_func, setting);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        std::shared_ptr<kumo::nlp::NlpSetting> get_nlp_setting(int slot = 0) {
+            NlpSlotSettingTypePtr scope;
+            switch (slot) {
+                case 0: {
+                    _nlp_config_default.read(&scope);
+                    break;
+                }
+                case 1: {
+                    _nlp_config_1.read(&scope);
+                    break;
+                }
+                case 2: {
+                    _nlp_config_2.read(&scope);
+                    break;
+                }
+                case 3: {
+                    _nlp_config_3.read(&scope);
+                    break;
+                }
+                case 4: {
+                    _nlp_config_4.read(&scope);
+                    break;
+                }
+                case 5: {
+                    _nlp_config_5.read(&scope);
+                    break;
+                }
+                case 6: {
+                    _nlp_config_6.read(&scope);
+                    break;
+                }
+                default: {
+                    KLOG_EVERY_MIN(ERROR)<<"the slot:["<<slot<<"] you called is out of range, using default config installed";
+                    _nlp_config_default.read(&scope);
+                    break;
+                }
+            }
+            return *scope;
+        }
+
+        static bool modify_nlp_map_func(turbo::flat_hash_map<std::string, std::shared_ptr<kumo::nlp::NlpSetting> > &d,
+                                std::string_view name, const kumo::nlp::NlpSetting &new_data) {
+            /// use double data ptr, avoid front end and backend race.
+            auto ptr = std::make_shared<kumo::nlp::NlpSetting>();
+            *ptr = new_data;
+            d[name] = ptr;
+            return true;
+        }
+
+        void set_nlp_setting(const kumo::nlp::NlpSetting &setting, std::string_view name) {
+            _nlp_config.modify(modify_nlp_map_func, name, setting);
+        }
+
+        std::shared_ptr<kumo::nlp::NlpSetting> get_nlp_setting(std::string_view name) {
+            NlpSettingTypePtr scoped;
+            _nlp_config.read(&scoped);
+            auto it = (*scoped).find(name);
+            if (it != (*scoped).end()) {
+                return it->second;
+            }
+            return nullptr;
+        }
+
+        turbo::flat_hash_map<std::string, std::shared_ptr<kumo::nlp::NlpSetting>> get_all_nlp_user_setting() {
+            NlpSettingTypePtr scoped;
+            _nlp_config.read(&scoped);
+            return *scoped;
+        }
+
+        size_t nlp_setting_slots() const {
+            return 7;
+        }
+
+        static const kumo::nlp::NlpSetting &full_setting();
+
+        static const kumo::nlp::NlpSetting &default_setting();
+
     private:
         GnefConfig();
 
-        mutable taco::DoublyBufferedData<std::shared_ptr<DictConfig> > _dict_config;
-        mutable taco::DoublyBufferedData<std::shared_ptr<DetectConfig> > _detect_config;
-        mutable taco::DoublyBufferedData<std::shared_ptr<turbo::flat_hash_map<std::string, std::string>> > _kv_config;
+        mutable DictConfigType _dict_config;
+        mutable DetectConfigType _detect_config;
+        mutable KVConfigType _kv_config;
+        /// this is for user bug
+        /// select nlp('气吞万里如虎','john_debug') or nlp('气吞万里如虎','kally_debug')
+        mutable NlpSettingType _nlp_config;
+
+        /// online application do not always change the config frequently,
+        /// using slot for quick access,by select nlp('气吞万里如虎',1) or select nlp('气吞万里如虎',2)
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_default;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_1;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_2;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_3;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_4;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_5;
+        taco::DoublyBufferedData<std::shared_ptr<kumo::nlp::NlpSetting> > _nlp_config_6;
     };
 } // namespace gnef::api

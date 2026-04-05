@@ -13,13 +13,15 @@
 // limitations under the License.
 //
 
-#include <gnef/api/segment.h>
-#include <gnef/instance/segmenter.h>
+#include <gnef/operators/null_ner.h>
 
 namespace gnef::api {
-
-    turbo::Status segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res) {
-        auto ins = SegmentorInstance::instance().get();
-        return ins->segment(query,setting,  res);
+    turbo::Status NullNerOps::ner(const std::string &query, const kumo::nlp::NerSetting &setting,
+                      kumo::nlp::NerResponse &res) const {
+        return turbo::OkStatus();
     }
-}  // namespace gnef::api
+
+    turbo::Status NullNerOps::initialize(const std::string &dict_dir) {
+        return turbo::OkStatus();
+    }
+} // namespace gnef::api

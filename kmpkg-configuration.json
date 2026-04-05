@@ -1,7 +1,7 @@
 {
   "default-registry": {
     "kind": "git",
-    "baseline": "05ac977a75b7aa452063366efd7d23c38a168c48",
+    "baseline": "5bcaf470173789d735d39aba59bcdeb2bfc4a274",
     "repository": "https://github.com/kumose/kmpkgcore.git"
   },
   "registries": [

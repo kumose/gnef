@@ -80,7 +80,7 @@ namespace gnef::sql {
     goose::ClientContext &context, goose::TableFunctionInitInput &input) {
         auto result = goose::make_uniq<DetectConfigData>();
         detect_init(context, result);
-        return result;
+        return std::move(result);
     }
 
     goose::unique_ptr<goose::FunctionData> detect_config_bind(goose::ClientContext &context,

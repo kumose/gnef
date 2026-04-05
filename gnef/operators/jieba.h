@@ -113,7 +113,7 @@ namespace gnef::api {
         /// stop_word_path -> stop_words.utf8
         turbo::Status initialize(const std::string & dict_dir) override;
 
-        turbo::Status segment(const kumo::nlp::SegmentRequest &req, kumo::nlp::SegmentResult &res) const override;
+        turbo::Status segment(std::string_view query, const kumo::nlp::SegmentSetting &setting, kumo::nlp::SegmentResult &res) const override;
     private:
         friend class SegmentorInstance;
 

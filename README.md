@@ -14,20 +14,46 @@ gnef
 [中文版](./README_CN.md)
 
 
-gnef Project Description
+gnef is a nlp process framework, support c++ api, c++ sql api, provide some default
+implement. 
+
+* normalize
+* segment
+* ner
+* intent
+* rewrite
+
+the proto see [nlpproto](https://github.com/kumose/nlpproto).
+
+the SQL IR extension power by [goose](https://github.com/kumose/goose.git) and [goose docs](https://pub.kumose.cc/goose).
+
 
 ## demos
 
 ### normalize
 
 ```shell
-elect normalize_json('I , Jeff9是谁的朋友，是洛萨的吧,软件☺，是什么    我看是一只小猫，。是把','{"full_to_half":true,"blank_to_one":true,"remove_bad_char":true,"remove_emoji":true, "remove_punctuation":true, "zh_to_pin":true,  "zh_to_pin_short":true}') as cc; 
-┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                                                                                                   cc                                                                                                                    │                                                                
-│                                                                                                                 varchar                                                                                                                 │                                                                
-├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤                                                                
-│ {"query":"I Jeff9是谁的朋友是洛萨的吧软件是什么 我看是一只小猫。是把","pinyin":"I Jeff 9 shi shei de peng you shi luo sa de ba ruan jian shi shen me wo kan shi yi zhi xiao mao 。 shi ba","pinyin_short":"IJssdpyslsdbrjssmwksyzxmsb"} │                                                                
-└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘              
+./build/gnef/gnef
+Goose v0.6.10 (Galileo)
+Enter ".help" for usage hints.
+memory GNEF select nlp_process('我们来自清华大学，我们的导师是姚文君☺',4);
+Invalid Error:
+Must Initialize Gnef first! by call: pragma initialize_gnef_default; or pragma initialize_gnef('your dict config')                                                                                                                                                                                         
+memory GNEF pragma initialize_gnef_default;
+┌─────────┐
+│ Success │                                                                                                                                                                                                                                                                                                
+│ boolean │                                                                                                                                                                                                                                                                                                
+├─────────┤                                                                                                                                                                                                                                                                                                
+│ 0 rows  │                                                                                                                                                                                                                                                                                                
+└─────────┘                                                                                                                                                                                                                                                                                                
+memory GNEF select nlp_process('我们来自清华大学，我们的导师是姚文君☺',4);
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                                         nlp_process('我们来自清华大学，我们的导师是姚文君☺', 4)                                                                                                                         │
+│                                                                                                                                                 varchar                                                                                                                                                 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ {"raw_query":"我们来自清华大学，我们的导师是姚文君☺","normalized":{"query":"我们来自清华大学我们的导师是姚文君"},"terms":{"terms":[{"main_term":{"term":"姚文君","pos":"x","offset":[{"offsets":[{"offset":45,"unicode_offset":3,"unicode_length":3}]}],"idf":11.739204307083542}},{"main_term":{"term" │
+│ :"导师","pos":"n","offset":[{"offsets":[{"offset":36,"unicode_offset":2,"unicode_length":2}]}],"idf":8.90346537821}},{"main_term":{"term":"清华大学","pos":"nt","offset":[{"offsets":[{"offset":12,"unicode_offset":4,"unicode_length":4}]}],"idf":8.08059472162}}]},"cost_us":36}                      │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 ## 🛠️ Build
 
