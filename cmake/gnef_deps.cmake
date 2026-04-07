@@ -34,7 +34,7 @@ if (KMCMAKE_BUILD_BENCHMARK)
     #include(require_benchmark)
 endif ()
 
-find_package(Thread REQUIRED)
+find_package(Threads REQUIRED)
 find_package(goose REQUIRED)
 find_package(fasttext REQUIRED)
 find_package(xxd REQUIRED)
