@@ -60,7 +60,7 @@ memory GNEF select nlp_process('We are from Tsinghua University, and our supervi
 ```
 
 After the agent's perception module acquires text data, it can directly reuse the native call format in the above demo, call the nlp_process function through the SQL interface, and quickly complete text normalization, word segmentation, NER and other processing. For example, the demo accurately extracts key information such as "Tsinghua University", "Yao Wenjun" and "supervisor", and outputs structured JSON results including processing time, part of speech, and IDF value, providing accurate data support for agent decision-making; at the same time, the plug-in design allows flexible replacement of algorithm plug-ins according to the agent application scenario, optimizing word segmentation and NER logic. There is no need to reconstruct the docking code between the agent and gnef, nor modify the native call format, which can quickly improve the accuracy of agent data analysis and decision-making. It is not a simple C++ NLP toolkit, but a truly production-oriented, scalable and maintainable industrial-grade NLP operation framework. It not only completely reconstructs the development paradigm of C++ NLP, but also provides solid support for the rapid iteration and efficient implementation of agents, helping agents quickly achieve accurate data analysis and intelligent decision-making.
-> （注：文档部分内容可能由 AI 生成）
+
 ## 🛠️ Build
 
 This project uses [kmpkg](https://github.com/kumose/kmcmake) for dependency management and build integration.
