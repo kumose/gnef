@@ -54,7 +54,7 @@ namespace gnef::sql {
         }
 
         {
-            static kumo::nlp::NlpSetting kDefault = gnef::api::GnefConfig::full_setting();
+            static kumo::nlp::NlpSetting kDefault = gnef::api::GnefConfig::default_setting();
             auto ret_map = func(&kDefault);
             for (auto &it: ret_map) {
                 NlpConfigInformation entity;
@@ -96,7 +96,10 @@ namespace gnef::sql {
 
         std::sort(result->entries.begin(), result->entries.end(),
                   [](const NlpConfigInformation &a, const NlpConfigInformation &b) {
-                      return a.region < b.region ? true : a.key < b.key;
+                      if (a.region != b.region) {
+                          return a.region < b.region;
+                      }
+                      return a.key < b.key;
                   });
     }
 
