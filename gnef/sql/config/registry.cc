@@ -58,14 +58,27 @@ namespace gnef::sql::internal {
         ///////////////
         /// pragma setting
 
-        loader.RegisterFunction(goose::PragmaFunction::PragmaCall("set_user_nlp_config", pragma_nlp_config,
+        loader.RegisterFunction(goose::PragmaFunction::PragmaCall("set_user_nlp_config", pragma_nlp_config_user,
                                                           {
+                                                              goose::LogicalType::VARCHAR,
                                                               goose::LogicalType::VARCHAR,
                                                               goose::LogicalType::VARCHAR
                                                           }));
         loader.RegisterFunction(goose::PragmaFunction::PragmaCall("set_nlp_config", pragma_nlp_config,
                                                           {
                                                               goose::LogicalType::INTEGER,
+                                                              goose::LogicalType::VARCHAR
+                                                          }));
+        loader.RegisterFunction(goose::PragmaFunction::PragmaCall("set_kv_nlp_config", pragma_nlp_config_slot,
+                                                            {
+                                                                goose::LogicalType::INTEGER,
+                                                                goose::LogicalType::VARCHAR,
+                                                                goose::LogicalType::VARCHAR
+                                                            }));
+        loader.RegisterFunction(goose::PragmaFunction::PragmaCall("set_slot_nlp_config", pragma_nlp_config_slot,
+                                                          {
+                                                              goose::LogicalType::INTEGER,
+                                                              goose::LogicalType::VARCHAR,
                                                               goose::LogicalType::VARCHAR
                                                           }));
 

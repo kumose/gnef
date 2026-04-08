@@ -41,4 +41,7 @@ namespace gnef::sql {
 
     /// pragma function
     void pragma_nlp_config(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+    void pragma_nlp_config_slot(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+    void pragma_nlp_config_user(goose::ClientContext &context, const goose::FunctionParameters &parameters);
+
 }  // gnef::sql

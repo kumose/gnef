@@ -16,7 +16,7 @@
 #include <gnef/sql/config/nlp.h>
 #include <gnef/api/config.h>
 #include <merak/flatten.h>
-
+#include <merak/flatten/flat_pb.h>
 #include "merak/proto/json_to_pb.h"
 #include "merak/proto/pb_to_json.h"
 
@@ -246,9 +246,7 @@ namespace gnef::sql {
                             "__error:%d slot config not found, slot should be [0,%d]", slot,
                             kLost - 1));
                     }
-                    std::cerr << "1"<<std::endl;
                     gnef::api::GnefConfig::instance().set_nlp_setting(nc, slot);
-                    std::cerr << "1"<<std::endl;
                     break;
                 }
                 case goose::LogicalType::VARCHAR: {
@@ -275,5 +273,54 @@ namespace gnef::sql {
         } catch (...) {
             throw;
         }
+    }
+
+    void pragma_nlp_config_user(goose::ClientContext &context, const goose::FunctionParameters &parameters) {
+        auto conf = parameters.values[0].GetValue<std::string>();
+        auto key = parameters.values[1].GetValue<std::string>();
+        auto value = parameters.values[2].GetValue<std::string>();
+
+        auto c = gnef::api::GnefConfig::instance().get_nlp_setting(std::string_view(conf));
+        if (!c) {
+            throw std::logic_error(turbo::str_format("__error: %s config not found", conf.c_str()));
+        }
+        kumo::nlp::NlpSetting nc = *c.get();
+        merak::FlatProto proto(nc);
+        auto rs = proto.set(std::string_view(key), std::string_view(value));
+        if (!rs.ok()) {
+            throw std::logic_error(rs.message());
+        }
+        gnef::api::GnefConfig::instance().set_nlp_setting(nc, std::string_view(conf));
+    }
+
+    void pragma_nlp_config_slot(goose::ClientContext &context, const goose::FunctionParameters &parameters) {
+        auto &slot_param = parameters.values[0];
+        auto &key_param = parameters.values[1];
+        auto &value_param = parameters.values[2];
+
+        auto slot = slot_param.GetValue<int32_t>();
+        if (slot < 0 || slot >= static_cast<int32_t>(kLost)) {
+            throw std::logic_error(turbo::str_format(
+                "__error:%d slot out of range, valid is [0,%d]", slot,
+                static_cast<int>(kLost) - 1));
+        }
+
+        auto key = key_param.GetValue<std::string>();
+        auto val = value_param.GetValue<std::string>();
+        if (key.empty()) {
+            throw std::logic_error(turbo::str_format("__error: config key must not be empty"));
+        }
+
+        auto c = gnef::api::GnefConfig::instance().get_nlp_setting(static_cast<int>(slot));
+        if (!c) {
+            throw std::logic_error(turbo::str_format("__error: slot %d config not found", slot));
+        }
+        kumo::nlp::NlpSetting nc = *c.get();
+        merak::FlatProto proto(nc);
+        auto rs = proto.set(std::string_view(key), std::string_view(val));
+        if (!rs.ok()) {
+            throw std::logic_error(rs.message());
+        }
+        gnef::api::GnefConfig::instance().set_nlp_setting(nc, static_cast<int>(slot));
     }
 }
